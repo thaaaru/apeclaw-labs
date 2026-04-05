@@ -165,7 +165,7 @@ ApeClaw is built with a **security-first** architecture:
 
 ## License
 
-MIT OR Apache-2.0 — your choice.
+Apache-2.0
 
 ---
 

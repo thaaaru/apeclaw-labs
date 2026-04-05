@@ -79,4 +79,4 @@ docs: add Sinhala tool descriptions
 ## Attribution
 
 ApeClaw is built on [ZeroClaw](https://github.com/zeroclaw-labs/zeroclaw) by ZeroClaw Labs,
-licensed MIT OR Apache-2.0. We are grateful for their foundational work.
+licensed MIT OR Apache-2.0 (upstream). ApeClaw is Apache-2.0. We are grateful for their foundational work.
