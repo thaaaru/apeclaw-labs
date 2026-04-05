@@ -228,7 +228,7 @@ async fn download_binary(url: &str, dest: &Path) -> Result<()> {
     Ok(())
 }
 
-/// Extract the `zeroclaw` binary from a `.tar.gz` archive.
+/// Extract the `apeclaw` binary from a `.tar.gz` archive.
 fn extract_tar_gz(archive_bytes: &[u8], dest: &Path) -> Result<()> {
     use flate2::read::GzDecoder;
     use std::io::Read;
@@ -241,7 +241,7 @@ fn extract_tar_gz(archive_bytes: &[u8], dest: &Path) -> Result<()> {
         let mut entry = entry.context("failed to read tar entry")?;
         let path = entry.path().context("failed to read entry path")?;
 
-        // The archive contains a single binary named "apeclaw" (or "zeroclaw.exe" on Windows).
+        // The archive contains a single binary named "apeclaw" (or "apeclaw.exe" on Windows).
         let file_name = path.file_name().and_then(|n| n.to_str()).unwrap_or("");
 
         if file_name == "apeclaw" || file_name == "zeroclaw.exe" {
@@ -530,7 +530,7 @@ mod tests {
         use flate2::write::GzEncoder;
         use std::io::Write;
 
-        // Build a tar.gz in memory containing a fake "zeroclaw" binary.
+        // Build a tar.gz in memory containing a fake "apeclaw" binary.
         let fake_binary = b"#!/bin/sh\necho apeclaw";
         let mut tar_buf = Vec::new();
         {
@@ -540,7 +540,7 @@ mod tests {
             header.set_mode(0o755);
             header.set_cksum();
             builder
-                .append_data(&mut header, "zeroclaw", &fake_binary[..])
+                .append_data(&mut header, "apeclaw", &fake_binary[..])
                 .unwrap();
             builder.finish().unwrap();
         }

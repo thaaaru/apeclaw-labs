@@ -606,7 +606,7 @@ mod tests {
         }
 
         let output = obs.encode();
-        assert!(output.contains("zeroclaw_heartbeat_ticks_total 3"));
+        assert!(output.contains("apeclaw_heartbeat_ticks_total 3"));
     }
 
     #[test]
@@ -830,7 +830,7 @@ mod tests {
         let output = obs.encode();
         assert!(output.contains("zeroclaw_deployment_lead_time_seconds"));
         assert!(output.contains("zeroclaw_recovery_time_seconds"));
-        assert!(output.contains("zeroclaw_mttr_seconds 600"));
+        assert!(output.contains("apeclaw_mttr_seconds 600"));
     }
 
     #[test]
