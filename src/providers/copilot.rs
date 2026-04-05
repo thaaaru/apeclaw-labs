@@ -206,7 +206,7 @@ impl CopilotProvider {
                 let user = std::env::var("USER")
                     .or_else(|_| std::env::var("USERNAME"))
                     .unwrap_or_else(|_| "unknown".to_string());
-                std::env::temp_dir().join(format!("zeroclaw-copilot-{user}"))
+                std::env::temp_dir().join(format!("apeclaw-copilot-{user}"))
             });
 
         if let Err(err) = std::fs::create_dir_all(&token_dir) {

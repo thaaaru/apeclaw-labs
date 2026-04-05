@@ -558,9 +558,9 @@ Examples:
         /// Path for serial transport (/dev/ttyACM0) or "native" for local GPIO
         path: String,
     },
-    /// Flash ZeroClaw firmware to Arduino (creates .ino, installs arduino-cli if needed, uploads)
+    /// Flash ApeClaw firmware to Arduino (creates .ino, installs arduino-cli if needed, uploads)
     #[command(long_about = "\
-Flash ZeroClaw firmware to an Arduino board.
+Flash ApeClaw firmware to an Arduino board.
 
 Generates the .ino sketch, installs arduino-cli if it is not \
 already available, compiles, and uploads the firmware.
@@ -580,7 +580,7 @@ Examples:
         #[arg(long)]
         host: Option<String>,
     },
-    /// Flash ZeroClaw firmware to Nucleo-F401RE (builds + probe-rs run)
+    /// Flash ApeClaw firmware to Nucleo-F401RE (builds + probe-rs run)
     FlashNucleo,
 }
 

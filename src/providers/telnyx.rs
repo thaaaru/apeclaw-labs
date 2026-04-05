@@ -176,7 +176,7 @@ impl Provider for TelnyxProvider {
     ) -> anyhow::Result<String> {
         let api_key = self.api_key.as_ref().ok_or_else(|| {
             anyhow::anyhow!(
-                "Telnyx API key not set. Set TELNYX_API_KEY environment variable or run `zeroclaw onboard`."
+                "Telnyx API key not set. Set TELNYX_API_KEY environment variable or run `apeclaw onboard`."
             )
         })?;
 
@@ -234,7 +234,7 @@ impl Provider for TelnyxProvider {
     ) -> anyhow::Result<String> {
         let api_key = self.api_key.as_ref().ok_or_else(|| {
             anyhow::anyhow!(
-                "Telnyx API key not set. Set TELNYX_API_KEY environment variable or run `zeroclaw onboard`."
+                "Telnyx API key not set. Set TELNYX_API_KEY environment variable or run `apeclaw onboard`."
             )
         })?;
 

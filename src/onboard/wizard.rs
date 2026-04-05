@@ -399,7 +399,7 @@ fn apply_provider_update(
 // ── Quick setup (zero prompts) ───────────────────────────────────
 
 /// Non-interactive setup: generates a sensible default config instantly.
-/// Use `zeroclaw onboard` or `zeroclaw onboard --api-key sk-... --provider openrouter --memory sqlite|lucid`.
+/// Use `apeclaw onboard` or `apeclaw onboard --api-key sk-... --provider openrouter --memory sqlite|lucid`.
 fn backend_key_from_choice(choice: usize) -> &'static str {
     selectable_memory_backends()
         .get(choice)
@@ -768,35 +768,35 @@ async fn run_quick_setup_with_home(
     println!("  {}", style("Next steps:").white().bold());
     if credential_override.is_none() {
         if provider_supports_keyless_local_usage(&provider_name) {
-            println!("    1. Chat:     zeroclaw agent -m \"Hello!\"");
-            println!("    2. Gateway:  zeroclaw gateway");
-            println!("    3. Status:   zeroclaw status");
+            println!("    1. Chat:     apeclaw agent -m \"Hello!\"");
+            println!("    2. Gateway:  apeclaw gateway");
+            println!("    3. Status:   apeclaw status");
         } else if provider_supports_device_flow(&provider_name) {
             if canonical_provider_name(&provider_name) == "copilot" {
-                println!("    1. Chat:              zeroclaw agent -m \"Hello!\"");
+                println!("    1. Chat:              apeclaw agent -m \"Hello!\"");
                 println!("       (device / OAuth auth will prompt on first run)");
-                println!("    2. Gateway:           zeroclaw gateway");
-                println!("    3. Status:            zeroclaw status");
+                println!("    2. Gateway:           apeclaw gateway");
+                println!("    3. Status:            apeclaw status");
             } else {
                 println!(
                     "    1. Login:             zeroclaw auth login --provider {}",
                     provider_name
                 );
-                println!("    2. Chat:              zeroclaw agent -m \"Hello!\"");
-                println!("    3. Gateway:           zeroclaw gateway");
-                println!("    4. Status:            zeroclaw status");
+                println!("    2. Chat:              apeclaw agent -m \"Hello!\"");
+                println!("    3. Gateway:           apeclaw gateway");
+                println!("    4. Status:            apeclaw status");
             }
         } else {
             let env_var = provider_env_var(&provider_name);
             println!("    1. Set your API key:  export {env_var}=\"sk-...\"");
             println!("    2. Or edit:           ~/.apeclaw/config.toml");
-            println!("    3. Chat:              zeroclaw agent -m \"Hello!\"");
-            println!("    4. Gateway:           zeroclaw gateway");
+            println!("    3. Chat:              apeclaw agent -m \"Hello!\"");
+            println!("    4. Gateway:           apeclaw gateway");
         }
     } else {
-        println!("    1. Chat:     zeroclaw agent -m \"Hello!\"");
-        println!("    2. Gateway:  zeroclaw gateway");
-        println!("    3. Status:   zeroclaw status");
+        println!("    1. Chat:     apeclaw agent -m \"Hello!\"");
+        println!("    2. Gateway:  apeclaw gateway");
+        println!("    3. Status:   apeclaw status");
     }
     println!();
 
@@ -6191,7 +6191,7 @@ fn print_summary(config: &Config) {
     );
     println!(
         "       {}",
-        style("zeroclaw agent -m \"Hello, ZeroClaw!\"").yellow()
+        style("apeclaw agent -m \"Hello, ZeroClaw!\"").yellow()
     );
     println!();
     step += 1;
@@ -6200,7 +6200,7 @@ fn print_summary(config: &Config) {
         "    {} Start interactive CLI mode:",
         style(format!("{step}.")).cyan().bold()
     );
-    println!("       {}", style("zeroclaw agent").yellow());
+    println!("       {}", style("apeclaw agent").yellow());
     println!();
     step += 1;
 
@@ -6208,7 +6208,7 @@ fn print_summary(config: &Config) {
         "    {} Check full status:",
         style(format!("{step}.")).cyan().bold()
     );
-    println!("       {}", style("zeroclaw status").yellow());
+    println!("       {}", style("apeclaw status").yellow());
 
     println!();
     println!(

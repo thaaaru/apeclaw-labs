@@ -991,7 +991,7 @@ impl GeminiProvider {
                  2. Run `gemini` CLI to authenticate (tokens will be reused)\n\
                  3. Run `zeroclaw auth login --provider gemini`\n\
                  4. Get an API key from https://aistudio.google.com/app/apikey\n\
-                 5. Run `zeroclaw onboard` to configure"
+                 5. Run `apeclaw onboard` to configure"
             )
         })?;
 

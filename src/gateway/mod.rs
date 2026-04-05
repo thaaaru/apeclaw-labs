@@ -752,7 +752,7 @@ pub async fn run_gateway(
     }
 
     let pfx = path_prefix.unwrap_or("");
-    println!("🦀 ZeroClaw Gateway listening on http://{display_addr}{pfx}");
+    println!("🦀 ApeClaw Gateway listening on http://{display_addr}{pfx}");
     if let Some(ref url) = tunnel_url {
         println!("  🌐 Public URL: {url}");
     }
@@ -766,7 +766,7 @@ pub async fn run_gateway(
         println!("     Send: POST {pfx}/pair with header X-Pairing-Code: {code}");
     } else if pairing.require_pairing() {
         println!("  🔒 Pairing: ACTIVE (bearer token required)");
-        println!("     To pair a new device: zeroclaw gateway get-paircode --new");
+        println!("     To pair a new device: apeclaw gateway get-paircode --new");
         println!();
     } else {
         println!("  ⚠️  Pairing: DISABLED (all requests accepted)");
@@ -1108,7 +1108,7 @@ pub async fn run_gateway(
                     });
                 }
                 _ = shutdown_signal.changed() => {
-                    tracing::info!("🦀 ZeroClaw Gateway shutting down...");
+                    tracing::info!("🦀 ApeClaw Gateway shutting down...");
                     break;
                 }
             }
@@ -1121,7 +1121,7 @@ pub async fn run_gateway(
         )
         .with_graceful_shutdown(async move {
             let _ = shutdown_rx.changed().await;
-            tracing::info!("🦀 ZeroClaw Gateway shutting down...");
+            tracing::info!("🦀 ApeClaw Gateway shutting down...");
         })
         .await?;
     }

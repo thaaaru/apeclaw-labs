@@ -539,7 +539,7 @@ impl TelegramChannel {
             anyhow::bail!(
                 "Missing [channels.telegram] section in config.toml. \
                 Add bot_token and allowed_users under [channels.telegram], \
-                or run `zeroclaw onboard --channels-only` to configure interactively"
+                or run `apeclaw onboard --channels-only` to configure interactively"
             );
         };
 

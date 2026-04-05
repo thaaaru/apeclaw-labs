@@ -89,7 +89,7 @@ fn ensure_avr_core() -> Result<()> {
     Ok(())
 }
 
-/// Flash ZeroClaw firmware to Arduino at the given port.
+/// Flash ApeClaw firmware to Arduino at the given port.
 pub fn flash_arduino_firmware(port: &str) -> Result<()> {
     ensure_arduino_cli()?;
     ensure_avr_core()?;
@@ -133,7 +133,7 @@ pub fn flash_arduino_firmware(port: &str) -> Result<()> {
         );
     }
 
-    println!("ZeroClaw firmware flashed successfully.");
+    println!("ApeClaw firmware flashed successfully.");
     println!("The Arduino now supports: capabilities, gpio_read, gpio_write.");
     Ok(())
 }

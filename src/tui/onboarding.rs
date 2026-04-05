@@ -431,7 +431,7 @@ impl App {
         self.pairing_required = true;
     }
 
-    /// Run `zeroclaw gateway get-paircode --new` locally to generate a code.
+    /// Run `apeclaw gateway get-paircode --new` locally to generate a code.
     async fn generate_code_via_cli() -> Option<String> {
         let output = tokio::process::Command::new("zeroclaw")
             .args(["gateway", "get-paircode", "--new"])
@@ -441,7 +441,7 @@ impl App {
         Self::extract_code_from_output(&output.stdout)
     }
 
-    /// Run `docker exec <container> zeroclaw gateway get-paircode --new`.
+    /// Run `docker exec <container> apeclaw gateway get-paircode --new`.
     async fn generate_code_via_docker() -> Option<String> {
         // Find zeroclaw container
         let ps = tokio::process::Command::new("docker")
@@ -623,7 +623,7 @@ pub async fn run_tui_onboarding() -> Result<()> {
                 };
 
                 println!();
-                println!("  \u{1f980} ZeroClaw {VERSION} configured successfully!");
+                println!("  \u{1f980} ApeClaw {VERSION} configured successfully!");
                 println!(
                     "     Provider:   {} ({})",
                     app.selected_provider(),
@@ -651,16 +651,16 @@ pub async fn run_tui_onboarding() -> Result<()> {
                 let channel = app.selected_channel();
                 if channel != "Skip for now" {
                     println!("  Next: edit config.toml to add your {channel} credentials.");
-                    println!("        zeroclaw config edit");
+                    println!("        apeclaw config edit");
                     println!();
                 }
-                println!("  Run `zeroclaw daemon` to start your agent.");
+                println!("  Run `apeclaw daemon` to start your agent.");
                 println!();
             }
             Err(e) => {
                 eprintln!();
                 eprintln!("  \u{2717} Failed to save configuration: {e}");
-                eprintln!("  You can re-run: zeroclaw onboard --tui");
+                eprintln!("  You can re-run: apeclaw onboard --tui");
                 eprintln!();
             }
         }
@@ -717,7 +717,7 @@ fn apply_tui_selections_to_config(app: &App, config: &mut Config) {
     // ── Channel ─────────────────────────────────────────────────────
     // Create a stub config for the selected channel with placeholder
     // values so the section appears in config.toml. The user fills in
-    // real tokens via `zeroclaw config edit` or the dashboard.
+    // real tokens via `apeclaw config edit` or the dashboard.
     let channel = app.selected_channel();
     match channel {
         "Telegram" => {
@@ -966,7 +966,7 @@ async fn push_config_to_docker(app: &App) {
 
     let provider_id = app.selected_provider_id();
 
-    // Use `zeroclaw onboard --quick` inside the container to reconfigure
+    // Use `apeclaw onboard --quick` inside the container to reconfigure
     let mut args = vec![
         "exec".to_string(),
         container,
@@ -1380,7 +1380,7 @@ fn render(frame: &mut Frame, app: &App) {
     // Version line
     let version_line = Line::from(vec![
         Span::styled("\u{1f980} ", theme::accent_style()),
-        Span::styled(format!("ZeroClaw {VERSION}"), theme::heading_style()),
+        Span::styled(format!("ApeClaw {VERSION}"), theme::heading_style()),
         Span::styled(
             "  \u{2502}  Zero overhead. Zero compromise.",
             theme::dim_style(),
@@ -3045,11 +3045,11 @@ fn render_complete(frame: &mut Frame, area: Rect, app: &App) {
     summary_lines.extend([
         Line::from(""),
         Line::from(Span::styled(
-            "  Run `zeroclaw daemon` to start your agent.",
+            "  Run `apeclaw daemon` to start your agent.",
             theme::body_style(),
         )),
         Line::from(Span::styled(
-            "  Run `zeroclaw doctor` to validate your setup.",
+            "  Run `apeclaw doctor` to validate your setup.",
             theme::body_style(),
         )),
         Line::from(""),

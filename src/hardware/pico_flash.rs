@@ -1,4 +1,4 @@
-//! `pico_flash` tool — flash ZeroClaw firmware to a Pico in BOOTSEL mode.
+//! `pico_flash` tool — flash ApeClaw firmware to a Pico in BOOTSEL mode.
 //!
 //! # Happy path
 //! 1. User holds BOOTSEL while plugging in Pico → RPI-RP2 drive appears.
@@ -25,7 +25,7 @@ const PORT_POLL_MS: u64 = 500;
 
 // ── PicoFlashTool ─────────────────────────────────────────────────────────────
 
-/// Tool: flash ZeroClaw firmware to a Pico in BOOTSEL mode.
+/// Tool: flash ApeClaw firmware to a Pico in BOOTSEL mode.
 ///
 /// The Pico must be connected with BOOTSEL held so it mounts as `RPI-RP2`.
 /// After flashing, the tool reconnects the serial transport in the
@@ -48,7 +48,7 @@ impl Tool for PicoFlashTool {
     }
 
     fn description(&self) -> &str {
-        "Flash ZeroClaw firmware to a Raspberry Pi Pico in BOOTSEL mode. \
+        "Flash ApeClaw firmware to a Raspberry Pi Pico in BOOTSEL mode. \
          The Pico must be connected with the BOOTSEL button held (shows as RPI-RP2 drive in Finder). \
          After flashing the Pico reboots and the serial \
          connection is refreshed automatically — no restart needed."

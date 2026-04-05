@@ -8909,7 +8909,7 @@ fn read_codex_openai_api_key() -> Option<String> {
 
 /// Ensure that essential bootstrap files exist in the workspace directory.
 ///
-/// When the workspace is created outside of `zeroclaw onboard` (e.g., non-tty
+/// When the workspace is created outside of `apeclaw onboard` (e.g., non-tty
 /// daemon/cron sessions), these files would otherwise be missing. This function
 /// creates sensible defaults that allow the agent to operate with a basic identity.
 async fn ensure_bootstrap_files(workspace_dir: &Path) -> Result<()> {
@@ -12075,7 +12075,7 @@ default_temperature = 0.7
 
     #[tokio::test]
     async fn config_save_and_load_tmpdir() {
-        let dir = std::env::temp_dir().join("zeroclaw_test_config");
+        let dir = std::env::temp_dir().join("apeclaw_test_config");
         let _ = fs::remove_dir_all(&dir).await;
         fs::create_dir_all(&dir).await.unwrap();
 
@@ -12319,7 +12319,7 @@ default_temperature = 0.7
     #[tokio::test]
     async fn config_save_atomic_cleanup() {
         let dir =
-            std::env::temp_dir().join(format!("zeroclaw_test_config_{}", uuid::Uuid::new_v4()));
+            std::env::temp_dir().join(format!("apeclaw_test_config_{}", uuid::Uuid::new_v4()));
         fs::create_dir_all(&dir).await.unwrap();
 
         let config_path = dir.join("config.toml");
@@ -13684,7 +13684,7 @@ requires_openai_auth = true
     async fn save_repairs_bare_config_filename_using_runtime_resolution() {
         let _env_guard = env_override_lock().await;
         let temp_home =
-            std::env::temp_dir().join(format!("zeroclaw_test_home_{}", uuid::Uuid::new_v4()));
+            std::env::temp_dir().join(format!("apeclaw_test_home_{}", uuid::Uuid::new_v4()));
         let workspace_dir = temp_home.join("workspace");
         let resolved_config_path = temp_home.join(".apeclaw").join("config.toml");
 
@@ -13935,7 +13935,7 @@ requires_openai_auth = true
     async fn load_or_init_workspace_override_uses_workspace_root_for_config() {
         let _env_guard = env_override_lock().await;
         let temp_home =
-            std::env::temp_dir().join(format!("zeroclaw_test_home_{}", uuid::Uuid::new_v4()));
+            std::env::temp_dir().join(format!("apeclaw_test_home_{}", uuid::Uuid::new_v4()));
         let workspace_dir = temp_home.join("profile-a");
 
         let original_home = std::env::var("HOME").ok();
@@ -13966,7 +13966,7 @@ requires_openai_auth = true
     async fn load_or_init_workspace_suffix_uses_legacy_config_layout() {
         let _env_guard = env_override_lock().await;
         let temp_home =
-            std::env::temp_dir().join(format!("zeroclaw_test_home_{}", uuid::Uuid::new_v4()));
+            std::env::temp_dir().join(format!("apeclaw_test_home_{}", uuid::Uuid::new_v4()));
         let workspace_dir = temp_home.join("workspace");
         let legacy_config_path = temp_home.join(".apeclaw").join("config.toml");
 
@@ -13998,7 +13998,7 @@ requires_openai_auth = true
     async fn load_or_init_workspace_override_keeps_existing_legacy_config() {
         let _env_guard = env_override_lock().await;
         let temp_home =
-            std::env::temp_dir().join(format!("zeroclaw_test_home_{}", uuid::Uuid::new_v4()));
+            std::env::temp_dir().join(format!("apeclaw_test_home_{}", uuid::Uuid::new_v4()));
         let workspace_dir = temp_home.join("custom-workspace");
         let legacy_config_dir = temp_home.join(".apeclaw");
         let legacy_config_path = legacy_config_dir.join("config.toml");
@@ -14041,7 +14041,7 @@ default_model = "legacy-model"
     async fn load_or_init_decrypts_feishu_channel_secrets() {
         let _env_guard = env_override_lock().await;
         let temp_home =
-            std::env::temp_dir().join(format!("zeroclaw_test_home_{}", uuid::Uuid::new_v4()));
+            std::env::temp_dir().join(format!("apeclaw_test_home_{}", uuid::Uuid::new_v4()));
         let config_dir = temp_home.join(".apeclaw");
         let config_path = config_dir.join("config.toml");
 
@@ -14089,7 +14089,7 @@ default_model = "legacy-model"
     async fn load_or_init_uses_persisted_active_workspace_marker() {
         let _env_guard = env_override_lock().await;
         let temp_home =
-            std::env::temp_dir().join(format!("zeroclaw_test_home_{}", uuid::Uuid::new_v4()));
+            std::env::temp_dir().join(format!("apeclaw_test_home_{}", uuid::Uuid::new_v4()));
         let temp_default_dir = temp_home.join(".apeclaw");
         let custom_config_dir = temp_home.join("profiles").join("agent-alpha");
 
@@ -14140,7 +14140,7 @@ default_model = "legacy-model"
     async fn load_or_init_env_workspace_override_takes_priority_over_marker() {
         let _env_guard = env_override_lock().await;
         let temp_home =
-            std::env::temp_dir().join(format!("zeroclaw_test_home_{}", uuid::Uuid::new_v4()));
+            std::env::temp_dir().join(format!("apeclaw_test_home_{}", uuid::Uuid::new_v4()));
         let temp_default_dir = temp_home.join(".apeclaw");
         let marker_config_dir = temp_home.join("profiles").join("persisted-profile");
         let env_workspace_dir = temp_home.join("env-workspace");
@@ -14184,7 +14184,7 @@ default_model = "legacy-model"
     #[test]
     async fn persist_active_workspace_marker_is_cleared_for_default_config_dir() {
         let temp_home =
-            std::env::temp_dir().join(format!("zeroclaw_test_home_{}", uuid::Uuid::new_v4()));
+            std::env::temp_dir().join(format!("apeclaw_test_home_{}", uuid::Uuid::new_v4()));
         let default_config_dir = temp_home.join(".apeclaw");
         let custom_config_dir = temp_home.join("profiles").join("custom-profile");
         let marker_path = default_config_dir.join(ACTIVE_WORKSPACE_STATE_FILE);
@@ -14209,7 +14209,7 @@ default_model = "legacy-model"
     async fn load_or_init_logs_existing_config_as_initialized() {
         let _env_guard = env_override_lock().await;
         let temp_home =
-            std::env::temp_dir().join(format!("zeroclaw_test_home_{}", uuid::Uuid::new_v4()));
+            std::env::temp_dir().join(format!("apeclaw_test_home_{}", uuid::Uuid::new_v4()));
         let workspace_dir = temp_home.join("profile-a");
         let config_path = workspace_dir.join("config.toml");
 

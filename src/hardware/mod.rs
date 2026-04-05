@@ -289,7 +289,7 @@ pub async fn boot(
     // BOOTSEL auto-detect: warn the user if a Pico is in BOOTSEL mode at startup.
     if uf2::find_rpi_rp2_mount().is_some() {
         tracing::info!("Pico detected in BOOTSEL mode (RPI-RP2 drive found)");
-        tracing::info!("Say \"flash my pico\" to install ZeroClaw firmware automatically");
+        tracing::info!("Say \"flash my pico\" to install ApeClaw firmware automatically");
     }
 
     // Aardvark discovery: scan for Total Phase Aardvark USB adapters and
@@ -587,7 +587,7 @@ fn run_info(chip: &str) -> Result<()> {
         println!();
         println!("Build with: cargo build --features hardware,probe");
         println!();
-        println!("Then run: zeroclaw hardware info --chip {}", chip);
+        println!("Then run: apeclaw hardware info --chip {}", chip);
         println!();
         println!("This uses probe-rs to attach to the Nucleo's ST-Link over USB");
         println!("and read chip info (memory map, etc.) — no firmware on target needed.");

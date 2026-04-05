@@ -214,7 +214,7 @@ impl WhatsAppChannel {
                         tracing::warn!(
                             "WhatsApp: ignoring message from unauthorized number: {normalized_from}. \
                             Add to channels.whatsapp.allowed_numbers in config.toml, \
-                            or run `zeroclaw onboard --channels-only` to configure interactively."
+                            or run `apeclaw onboard --channels-only` to configure interactively."
                         );
                         continue;
                     }
@@ -1283,7 +1283,7 @@ mod tests {
             "verify-me".into(),
             vec!["*".into()],
         )
-        .with_group_mention_patterns(vec!["@?ZeroClaw".into()])
+        .with_group_mention_patterns(vec!["@?ApeClaw".into()])
     }
 
     fn make_dm_mention_channel() -> WhatsAppChannel {
@@ -1619,7 +1619,7 @@ mod tests {
             "entry": [{
                 "changes": [{
                     "value": {
-                        "messages": [group_msg("111", "1", "@ZeroClaw what is the weather?")]
+                        "messages": [group_msg("111", "1", "@ApeClaw what is the weather?")]
                     }
                 }]
             }]
@@ -1636,7 +1636,7 @@ mod tests {
             "entry": [{
                 "changes": [{
                     "value": {
-                        "messages": [group_msg("111", "1", "Hey @ZeroClaw tell me a joke")]
+                        "messages": [group_msg("111", "1", "Hey @ApeClaw tell me a joke")]
                     }
                 }]
             }]
@@ -1653,7 +1653,7 @@ mod tests {
             "entry": [{
                 "changes": [{
                     "value": {
-                        "messages": [group_msg("111", "1", "@ZeroClaw")]
+                        "messages": [group_msg("111", "1", "@ApeClaw")]
                     }
                 }]
             }]
@@ -1672,7 +1672,7 @@ mod tests {
             "entry": [{
                 "changes": [{
                     "value": {
-                        "messages": [group_msg("111", "1", "@zeroclaw status")]
+                        "messages": [group_msg("111", "1", "@apeclaw status")]
                     }
                 }]
             }]
@@ -1708,7 +1708,7 @@ mod tests {
                     "value": {
                         "messages": [
                             group_msg("111", "1", "No mention here"),
-                            group_msg("222", "2", "@ZeroClaw help me"),
+                            group_msg("222", "2", "@ApeClaw help me"),
                             group_msg("333", "3", "Also no mention")
                         ]
                     }

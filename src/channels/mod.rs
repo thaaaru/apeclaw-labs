@@ -4107,7 +4107,7 @@ async fn bind_telegram_identity(config: &Config, identity: &str) -> Result<()> {
     let mut updated = config.clone();
     let Some(telegram) = updated.channels_config.telegram.as_mut() else {
         anyhow::bail!(
-            "Telegram channel is not configured. Run `zeroclaw onboard --channels-only` first"
+            "Telegram channel is not configured. Run `apeclaw onboard --channels-only` first"
         );
     };
 
@@ -4137,7 +4137,7 @@ async fn bind_telegram_identity(config: &Config, identity: &str) -> Result<()> {
         }
         Ok(false) => {
             println!(
-                "ℹ️ No managed daemon service detected. If `zeroclaw daemon`/`channel start` is already running, restart it to load the updated allowlist."
+                "ℹ️ No managed daemon service detected. If `apeclaw daemon`/`channel start` is already running, restart it to load the updated allowlist."
             );
         }
         Err(e) => {
@@ -4281,7 +4281,7 @@ pub(crate) async fn handle_command(command: crate::ChannelCommands, config: &Con
             }
             println!("\nTo start channels: zeroclaw channel start");
             println!("To check health:    zeroclaw channel doctor");
-            println!("To configure:      zeroclaw onboard");
+            println!("To configure:      apeclaw onboard");
             Ok(())
         }
         crate::ChannelCommands::Add {
@@ -4289,7 +4289,7 @@ pub(crate) async fn handle_command(command: crate::ChannelCommands, config: &Con
             config: _,
         } => {
             anyhow::bail!(
-                "Channel type '{channel_type}' — use `zeroclaw onboard` to configure channels"
+                "Channel type '{channel_type}' — use `apeclaw onboard` to configure channels"
             );
         }
         crate::ChannelCommands::Remove { name } => {
@@ -5050,7 +5050,7 @@ pub async fn doctor_channels(config: Config) -> Result<()> {
     }
 
     if channels.is_empty() {
-        println!("No real-time channels configured. Run `zeroclaw onboard` first.");
+        println!("No real-time channels configured. Run `apeclaw onboard` first.");
         return Ok(());
     }
 
@@ -5086,7 +5086,7 @@ pub async fn doctor_channels(config: Config) -> Result<()> {
     }
 
     if config.channels_config.webhook.is_some() {
-        println!("  ℹ️  Webhook   check via `zeroclaw gateway` then GET /health");
+        println!("  ℹ️  Webhook   check via `apeclaw gateway` then GET /health");
     }
 
     println!();
@@ -5405,11 +5405,11 @@ pub async fn start_channels(config: Config) -> Result<()> {
         ));
     }
     if channels.is_empty() {
-        println!("No channels configured. Run `zeroclaw onboard` to set up channels.");
+        println!("No channels configured. Run `apeclaw onboard` to set up channels.");
         return Ok(());
     }
 
-    println!("🦀 ZeroClaw Channel Server");
+    println!("🦀 ApeClaw Channel Server");
     println!("  🤖 Model:    {model}");
     let effective_backend = memory::effective_memory_backend_name(
         &config.memory.backend,

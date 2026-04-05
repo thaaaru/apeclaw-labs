@@ -64,7 +64,7 @@ impl HardwareSerialTransport {
         &self.port_path
     }
 
-    /// Attempt a ping handshake to verify ZeroClaw firmware is running.
+    /// Attempt a ping handshake to verify ApeClaw firmware is running.
     ///
     /// Opens the port, sends `{"cmd":"ping","params":{}}`, waits up to
     /// `PING_TIMEOUT_MS` for a response with `data.firmware == "zeroclaw"`.

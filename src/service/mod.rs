@@ -1200,7 +1200,7 @@ fn install_linux_openrc(config: &Config) -> Result<()> {
     let exe = resolve_openrc_executable()?;
     warn_if_binary_in_home(&exe);
 
-    let config_dir = Path::new("/etc/zeroclaw");
+    let config_dir = Path::new("/etc/apeclaw");
     let workspace_dir = config_dir.join("workspace");
     let log_dir = Path::new("/var/log/apeclaw");
 
@@ -1301,7 +1301,7 @@ fn install_linux_openrc(config: &Config) -> Result<()> {
 
     run_checked(Command::new("rc-update").args(["add", "zeroclaw", "default"]))?;
     println!("✅ Installed OpenRC service: /etc/init.d/apeclaw");
-    println!("   Config path: /etc/zeroclaw/config.toml");
+    println!("   Config path: /etc/apeclaw/config.toml");
     println!("   Start with: sudo zeroclaw service start");
     let _ = config;
     Ok(())
@@ -1511,13 +1511,13 @@ mod tests {
         use std::path::PathBuf;
 
         let exe_path = PathBuf::from("/usr/local/bin/zeroclaw");
-        let script = generate_openrc_script(&exe_path, Path::new("/etc/zeroclaw"));
+        let script = generate_openrc_script(&exe_path, Path::new("/etc/apeclaw"));
 
         assert!(script.starts_with("#!/sbin/openrc-run"));
         assert!(script.contains("name=\"zeroclaw\""));
         assert!(script.contains("description=\"ZeroClaw daemon\""));
         assert!(script.contains("command=\"/usr/local/bin/zeroclaw\""));
-        assert!(script.contains("command_args=\"--config-dir /etc/zeroclaw daemon\""));
+        assert!(script.contains("command_args=\"--config-dir /etc/apeclaw daemon\""));
         assert!(!script.contains("env APECLAW_CONFIG_DIR"));
         assert!(!script.contains("env APECLAW_WORKSPACE"));
         assert!(script.contains("command_background=\"yes\""));
@@ -1536,7 +1536,7 @@ mod tests {
         use std::path::PathBuf;
 
         let exe_path = PathBuf::from("/usr/local/bin/zeroclaw");
-        let script = generate_openrc_script(&exe_path, Path::new("/etc/zeroclaw"));
+        let script = generate_openrc_script(&exe_path, Path::new("/etc/apeclaw"));
 
         assert!(
             script.contains("export HOME=\"/var/lib/zeroclaw\""),
@@ -1549,7 +1549,7 @@ mod tests {
         use std::path::PathBuf;
 
         let exe_path = PathBuf::from("/usr/local/bin/zeroclaw");
-        let script = generate_openrc_script(&exe_path, Path::new("/etc/zeroclaw"));
+        let script = generate_openrc_script(&exe_path, Path::new("/etc/apeclaw"));
 
         assert!(
             script.contains("start_pre()"),
@@ -1569,7 +1569,7 @@ mod tests {
              \n\
              [Service]\n\
              Type=simple\n\
-             ExecStart=/usr/local/bin/zeroclaw daemon\n\
+             ExecStart=/usr/local/bin/apeclaw daemon\n\
              Restart=always\n\
              RestartSec=3\n\
              # Ensure HOME is set so headless browsers can create profile/cache dirs.\n\
@@ -1621,7 +1621,7 @@ mod tests {
     #[test]
     fn openrc_writability_probe_prefers_runuser_when_available() {
         let (program, args) =
-            build_openrc_writability_probe_command(Path::new("/etc/zeroclaw"), true);
+            build_openrc_writability_probe_command(Path::new("/etc/apeclaw"), true);
         assert_eq!(program, "runuser");
         assert_eq!(
             args,
@@ -1631,7 +1631,7 @@ mod tests {
                 "--".to_string(),
                 "sh".to_string(),
                 "-c".to_string(),
-                "test -w '/etc/zeroclaw'".to_string()
+                "test -w '/etc/apeclaw'".to_string()
             ]
         );
     }
@@ -1661,7 +1661,7 @@ mod tests {
     #[test]
     fn openrc_writability_probe_falls_back_to_su() {
         let (program, args) =
-            build_openrc_writability_probe_command(Path::new("/etc/zeroclaw/workspace"), false);
+            build_openrc_writability_probe_command(Path::new("/etc/apeclaw/workspace"), false);
         assert_eq!(program, "su");
         assert_eq!(
             args,
@@ -1669,7 +1669,7 @@ mod tests {
                 "-s".to_string(),
                 "/bin/sh".to_string(),
                 "-c".to_string(),
-                "test -w '/etc/zeroclaw/workspace'".to_string(),
+                "test -w '/etc/apeclaw/workspace'".to_string(),
                 "zeroclaw".to_string()
             ]
         );
