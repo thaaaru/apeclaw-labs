@@ -498,7 +498,7 @@ mod tests {
     #[tokio::test(flavor = "current_thread")]
     async fn shell_does_not_leak_api_key() {
         let _g1 = EnvGuard::set("API_KEY", "sk-test-secret-12345");
-        let _g2 = EnvGuard::set("ZEROCLAW_API_KEY", "sk-test-secret-67890");
+        let _g2 = EnvGuard::set("APECLAW_API_KEY", "sk-test-secret-67890");
 
         let tool = ShellTool::new(test_security_with_env_cmd(), test_runtime());
         let result = tool
@@ -512,7 +512,7 @@ mod tests {
         );
         assert!(
             !result.output.contains("sk-test-secret-67890"),
-            "ZEROCLAW_API_KEY leaked to shell command output"
+            "APECLAW_API_KEY leaked to shell command output"
         );
     }
 

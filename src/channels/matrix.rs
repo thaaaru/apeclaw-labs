@@ -1068,7 +1068,7 @@ impl Channel for MatrixChannel {
                 let body = if let Some((url, filename)) = media_download {
                     let workspace = std::path::PathBuf::from(
                         shellexpand::tilde(
-                            &std::env::var("ZEROCLAW_WORKSPACE")
+                            &std::env::var("APECLAW_WORKSPACE")
                                 .unwrap_or_else(|_| "/tmp/zeroclaw-uploads".to_string()),
                         )
                         .as_ref(),

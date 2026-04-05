@@ -965,7 +965,7 @@ mod tests {
     /// Live e2e: real OpenAI Codex provider + real FileReadTool + PDF fixture.
     /// Verifies the model receives extracted PDF text and responds meaningfully.
     ///
-    /// Requires valid OAuth credentials in `~/.zeroclaw/`.
+    /// Requires valid OAuth credentials in `~/.apeclaw/`.
     /// Run: `cargo test --lib -- tools::file_read::tests::e2e_live_file_read_pdf --ignored --nocapture`
     #[tokio::test]
     #[ignore = "requires valid OpenAI Codex OAuth credentials"]

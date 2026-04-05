@@ -62,7 +62,7 @@ static RUNTIME_PROXY_CLIENT_CACHE: OnceLock<RwLock<HashMap<String, reqwest::Clie
 
 /// Top-level ZeroClaw configuration, loaded from `config.toml`.
 ///
-/// Resolution order: `ZEROCLAW_WORKSPACE` env → `active_workspace.toml` marker → `~/.zeroclaw/config.toml`.
+/// Resolution order: `APECLAW_WORKSPACE` env → `active_workspace.toml` marker → `~/.apeclaw/config.toml`.
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct Config {
     /// Workspace directory - computed from home, not serialized
@@ -71,7 +71,7 @@ pub struct Config {
     /// Path to config.toml - computed from home, not serialized
     #[serde(skip)]
     pub config_path: PathBuf,
-    /// API key for the selected provider. Overridden by `ZEROCLAW_API_KEY` or `API_KEY` env vars.
+    /// API key for the selected provider. Overridden by `APECLAW_API_KEY` or `API_KEY` env vars.
     pub api_key: Option<String>,
     /// Base URL override for provider API (e.g. "http://10.0.0.1:11434" for remote Ollama)
     pub api_url: Option<String>,
@@ -116,7 +116,7 @@ pub struct Config {
     /// `X-Title`) for request routing or policy enforcement. Headers defined here
     /// augment (and override) the program's default headers.
     ///
-    /// Can also be set via `ZEROCLAW_EXTRA_HEADERS` environment variable using
+    /// Can also be set via `APECLAW_EXTRA_HEADERS` environment variable using
     /// the format `Key:Value,Key2:Value2`. Env var headers override config file headers.
     #[serde(default)]
     pub extra_headers: HashMap<String, String>,
@@ -136,6 +136,14 @@ pub struct Config {
     /// Security subsystem configuration (`[security]`).
     #[serde(default)]
     pub security: SecurityConfig,
+
+    /// Sri Lanka compliance audit logging.
+    ///
+    /// When `true`, every tool execution and outbound HTTP request is appended
+    /// to `logs/apeclaw_audit.log` in the workspace directory.
+    /// Supports ISO 27001 Annex A.12.4 (Logging and Monitoring) for local deployments.
+    #[serde(default = "default_sl_audit_enabled")]
+    pub sl_audit_enabled: bool,
 
     /// Backup tool configuration (`[backup]`).
     #[serde(default)]
@@ -465,7 +473,7 @@ pub struct WorkspaceConfig {
 }
 
 fn default_workspaces_dir() -> String {
-    "~/.zeroclaw/workspaces".to_string()
+    "~/.apeclaw/workspaces".to_string()
 }
 
 impl Default for WorkspaceConfig {
@@ -647,6 +655,10 @@ const DEFAULT_TEMPERATURE: f64 = 0.7;
 
 fn default_temperature() -> f64 {
     DEFAULT_TEMPERATURE
+}
+
+fn default_sl_audit_enabled() -> bool {
+    true
 }
 
 /// Default provider HTTP request timeout: 120 seconds.
@@ -2846,7 +2858,7 @@ fn default_project_intel_language() -> String {
 }
 
 fn default_project_intel_report_dir() -> String {
-    "~/.zeroclaw/project-reports".into()
+    "~/.apeclaw/project-reports".into()
 }
 
 fn default_project_intel_risk_sensitivity() -> String {
@@ -3159,7 +3171,7 @@ pub struct KnowledgeConfig {
 }
 
 fn default_knowledge_db_path() -> String {
-    "~/.zeroclaw/knowledge.db".into()
+    "~/.apeclaw/knowledge.db".into()
 }
 
 fn default_knowledge_max_nodes() -> usize {
@@ -3269,7 +3281,7 @@ impl Default for PluginSecurityConfig {
 }
 
 fn default_plugins_dir() -> String {
-    "~/.zeroclaw/plugins".to_string()
+    "~/.apeclaw/plugins".to_string()
 }
 
 fn default_max_plugins() -> usize {
@@ -7418,7 +7430,7 @@ pub struct EstopConfig {
 }
 
 fn default_estop_state_file() -> String {
-    "~/.zeroclaw/estop-state.json".to_string()
+    "~/.apeclaw/estop-state.json".to_string()
 }
 
 impl Default for EstopConfig {
@@ -8323,7 +8335,7 @@ pub struct SecurityOpsConfig {
 }
 
 fn default_playbooks_dir() -> String {
-    "~/.zeroclaw/playbooks".into()
+    "~/.apeclaw/playbooks".into()
 }
 
 fn default_require_approval() -> bool {
@@ -8335,7 +8347,7 @@ fn default_max_auto_severity() -> String {
 }
 
 fn default_report_output_dir() -> String {
-    "~/.zeroclaw/security-reports".into()
+    "~/.apeclaw/security-reports".into()
 }
 
 impl Default for SecurityOpsConfig {
@@ -8358,7 +8370,7 @@ impl Default for Config {
     fn default() -> Self {
         let home =
             UserDirs::new().map_or_else(|| PathBuf::from("."), |u| u.home_dir().to_path_buf());
-        let zeroclaw_dir = home.join(".zeroclaw");
+        let zeroclaw_dir = home.join(".apeclaw");
 
         Self {
             workspace_dir: zeroclaw_dir.join("workspace"),
@@ -8381,6 +8393,7 @@ impl Default for Config {
             cloud_ops: CloudOpsConfig::default(),
             conversational_ai: ConversationalAiConfig::default(),
             security: SecurityConfig::default(),
+            sl_audit_enabled: default_sl_audit_enabled(),
             security_ops: SecurityOpsConfig::default(),
             runtime: RuntimeConfig::default(),
             reliability: ReliabilityConfig::default(),
@@ -8462,14 +8475,14 @@ struct ActiveWorkspaceState {
 fn default_config_dir() -> Result<PathBuf> {
     if let Ok(home) = std::env::var("HOME") {
         if !home.is_empty() {
-            return Ok(PathBuf::from(home).join(".zeroclaw"));
+            return Ok(PathBuf::from(home).join(".apeclaw"));
         }
     }
 
     let home = UserDirs::new()
         .map(|u| u.home_dir().to_path_buf())
         .context("Could not find home directory")?;
-    Ok(home.join(".zeroclaw"))
+    Ok(home.join(".apeclaw"))
 }
 
 fn active_workspace_state_path(default_dir: &Path) -> PathBuf {
@@ -8619,7 +8632,7 @@ pub(crate) fn resolve_config_dir_for_workspace(workspace_dir: &Path) -> (PathBuf
 
     let legacy_config_dir = workspace_dir
         .parent()
-        .map(|parent| parent.join(".zeroclaw"));
+        .map(|parent| parent.join(".apeclaw"));
     if let Some(legacy_dir) = legacy_config_dir {
         if legacy_dir.join("config.toml").exists() {
             return (legacy_dir, workspace_config_dir);
@@ -8642,7 +8655,7 @@ pub(crate) fn resolve_config_dir_for_workspace(workspace_dir: &Path) -> (PathBuf
 /// Resolve the current runtime config/workspace directories for onboarding flows.
 ///
 /// This mirrors the same precedence used by `Config::load_or_init()`:
-/// `ZEROCLAW_CONFIG_DIR` > `ZEROCLAW_WORKSPACE` > active workspace marker > defaults.
+/// `APECLAW_CONFIG_DIR` > `APECLAW_WORKSPACE` > active workspace marker > defaults.
 pub async fn resolve_runtime_dirs_for_onboarding() -> Result<(PathBuf, PathBuf)> {
     let (default_zeroclaw_dir, default_workspace_dir) = default_config_and_workspace_dirs()?;
     let (config_dir, workspace_dir, _) =
@@ -8661,8 +8674,8 @@ enum ConfigResolutionSource {
 impl ConfigResolutionSource {
     const fn as_str(self) -> &'static str {
         match self {
-            Self::EnvConfigDir => "ZEROCLAW_CONFIG_DIR",
-            Self::EnvWorkspace => "ZEROCLAW_WORKSPACE",
+            Self::EnvConfigDir => "APECLAW_CONFIG_DIR",
+            Self::EnvWorkspace => "APECLAW_WORKSPACE",
             Self::ActiveWorkspaceMarker => "active_workspace.toml",
             Self::DefaultConfigDir => "default",
         }
@@ -8702,7 +8715,7 @@ async fn resolve_runtime_config_dirs(
     default_zeroclaw_dir: &Path,
     default_workspace_dir: &Path,
 ) -> Result<(PathBuf, PathBuf, ConfigResolutionSource)> {
-    if let Ok(custom_config_dir) = std::env::var("ZEROCLAW_CONFIG_DIR") {
+    if let Ok(custom_config_dir) = std::env::var("APECLAW_CONFIG_DIR") {
         let custom_config_dir = custom_config_dir.trim();
         if !custom_config_dir.is_empty() {
             let zeroclaw_dir = expand_tilde_path(custom_config_dir);
@@ -8714,7 +8727,7 @@ async fn resolve_runtime_config_dirs(
         }
     }
 
-    if let Ok(custom_workspace) = std::env::var("ZEROCLAW_WORKSPACE") {
+    if let Ok(custom_workspace) = std::env::var("APECLAW_WORKSPACE") {
         if !custom_workspace.is_empty() {
             let expanded = expand_tilde_path(&custom_workspace);
             let (zeroclaw_dir, workspace_dir) = resolve_config_dir_for_workspace(&expanded);
@@ -8830,7 +8843,7 @@ fn has_ollama_cloud_credential(config_api_key: Option<&str>) -> bool {
         return true;
     }
 
-    ["OLLAMA_API_KEY", "ZEROCLAW_API_KEY", "API_KEY"]
+    ["OLLAMA_API_KEY", "APECLAW_API_KEY", "API_KEY"]
         .iter()
         .any(|name| {
             std::env::var(name)
@@ -8839,7 +8852,7 @@ fn has_ollama_cloud_credential(config_api_key: Option<&str>) -> bool {
         })
 }
 
-/// Parse the `ZEROCLAW_EXTRA_HEADERS` environment variable value.
+/// Parse the `APECLAW_EXTRA_HEADERS` environment variable value.
 ///
 /// Format: `Key:Value,Key2:Value2`
 ///
@@ -8856,7 +8869,7 @@ pub fn parse_extra_headers_env(raw: &str) -> Vec<(String, String)> {
             let key = key.trim();
             let value = value.trim();
             if key.is_empty() {
-                tracing::warn!("Ignoring extra header with empty name in ZEROCLAW_EXTRA_HEADERS");
+                tracing::warn!("Ignoring extra header with empty name in APECLAW_EXTRA_HEADERS");
                 continue;
             }
             result.push((key.to_string(), value.to_string()));
@@ -10102,8 +10115,8 @@ impl Config {
 
     /// Apply environment variable overrides to config
     pub fn apply_env_overrides(&mut self) {
-        // API Key: ZEROCLAW_API_KEY or API_KEY (generic)
-        if let Ok(key) = std::env::var("ZEROCLAW_API_KEY").or_else(|_| std::env::var("API_KEY")) {
+        // API Key: APECLAW_API_KEY or API_KEY (generic)
+        if let Ok(key) = std::env::var("APECLAW_API_KEY").or_else(|_| std::env::var("API_KEY")) {
             if !key.is_empty() {
                 self.api_key = Some(key);
             }
@@ -10166,10 +10179,10 @@ impl Config {
             }
         }
 
-        // Extra provider headers: ZEROCLAW_EXTRA_HEADERS
+        // Extra provider headers: APECLAW_EXTRA_HEADERS
         // Format: "Key:Value,Key2:Value2"
         // Env var headers override config file headers with the same name.
-        if let Ok(raw) = std::env::var("ZEROCLAW_EXTRA_HEADERS") {
+        if let Ok(raw) = std::env::var("APECLAW_EXTRA_HEADERS") {
             for header in parse_extra_headers_env(&raw) {
                 self.extra_headers.insert(header.0, header.1);
             }
@@ -10178,8 +10191,8 @@ impl Config {
         // Apply named provider profile remapping (Codex app-server compatibility).
         self.apply_named_model_provider_profile();
 
-        // Workspace directory: ZEROCLAW_WORKSPACE
-        if let Ok(workspace) = std::env::var("ZEROCLAW_WORKSPACE") {
+        // Workspace directory: APECLAW_WORKSPACE
+        if let Ok(workspace) = std::env::var("APECLAW_WORKSPACE") {
             if !workspace.is_empty() {
                 let expanded = expand_tilde_path(&workspace);
                 let (_, workspace_dir) = resolve_config_dir_for_workspace(&expanded);
@@ -11082,7 +11095,7 @@ mod tests {
     async fn expand_tilde_path_expands_tilde_when_home_set() {
         // This test verifies that tilde expansion works when HOME is set.
         // In normal environments, HOME is set, so ~ should expand.
-        let path = expand_tilde_path("~/.zeroclaw");
+        let path = expand_tilde_path("~/.apeclaw");
         // The path should not literally start with '~' if HOME is set
         // (it should be expanded to the actual home directory)
         if std::env::var("HOME").is_ok() {
@@ -11496,6 +11509,7 @@ auto_save = true
             cloud_ops: CloudOpsConfig::default(),
             conversational_ai: ConversationalAiConfig::default(),
             security: SecurityConfig::default(),
+            sl_audit_enabled: default_sl_audit_enabled(),
             security_ops: SecurityOpsConfig::default(),
             runtime: RuntimeConfig {
                 kind: "docker".into(),
@@ -12087,6 +12101,7 @@ default_temperature = 0.7
             cloud_ops: CloudOpsConfig::default(),
             conversational_ai: ConversationalAiConfig::default(),
             security: SecurityConfig::default(),
+            sl_audit_enabled: default_sl_audit_enabled(),
             security_ops: SecurityOpsConfig::default(),
             runtime: RuntimeConfig::default(),
             reliability: ReliabilityConfig::default(),
@@ -12881,7 +12896,7 @@ channel_ids = ["C123", "D456"]
             phone_number_id: Some("123".into()),
             verify_token: Some("ver".into()),
             app_secret: None,
-            session_path: Some("~/.zeroclaw/state/whatsapp-web/session.db".into()),
+            session_path: Some("~/.apeclaw/state/whatsapp-web/session.db".into()),
             pair_phone: None,
             pair_code: None,
             allowed_numbers: vec!["+1".into()],
@@ -12905,7 +12920,7 @@ channel_ids = ["C123", "D456"]
             phone_number_id: None,
             verify_token: None,
             app_secret: None,
-            session_path: Some("~/.zeroclaw/state/whatsapp-web/session.db".into()),
+            session_path: Some("~/.apeclaw/state/whatsapp-web/session.db".into()),
             pair_phone: None,
             pair_code: None,
             allowed_numbers: vec![],
@@ -13340,12 +13355,12 @@ default_temperature = 0.7
         assert!(config.api_key.is_none());
 
         // SAFETY: test-only, single-threaded test runner.
-        unsafe { std::env::set_var("ZEROCLAW_API_KEY", "sk-test-env-key") };
+        unsafe { std::env::set_var("APECLAW_API_KEY", "sk-test-env-key") };
         config.apply_env_overrides();
         assert_eq!(config.api_key.as_deref(), Some("sk-test-env-key"));
 
         // SAFETY: test-only, single-threaded test runner.
-        unsafe { std::env::remove_var("ZEROCLAW_API_KEY") };
+        unsafe { std::env::remove_var("APECLAW_API_KEY") };
     }
 
     #[test]
@@ -13354,7 +13369,7 @@ default_temperature = 0.7
         let mut config = Config::default();
 
         // SAFETY: test-only, single-threaded test runner.
-        unsafe { std::env::remove_var("ZEROCLAW_API_KEY") };
+        unsafe { std::env::remove_var("APECLAW_API_KEY") };
         // SAFETY: test-only, single-threaded test runner.
         unsafe { std::env::set_var("API_KEY", "sk-fallback-key") };
         config.apply_env_overrides();
@@ -13671,13 +13686,13 @@ requires_openai_auth = true
         let temp_home =
             std::env::temp_dir().join(format!("zeroclaw_test_home_{}", uuid::Uuid::new_v4()));
         let workspace_dir = temp_home.join("workspace");
-        let resolved_config_path = temp_home.join(".zeroclaw").join("config.toml");
+        let resolved_config_path = temp_home.join(".apeclaw").join("config.toml");
 
         let original_home = std::env::var("HOME").ok();
         // SAFETY: test-only, single-threaded test runner.
         unsafe { std::env::set_var("HOME", &temp_home) };
         // SAFETY: test-only, single-threaded test runner.
-        unsafe { std::env::set_var("ZEROCLAW_WORKSPACE", &workspace_dir) };
+        unsafe { std::env::set_var("APECLAW_WORKSPACE", &workspace_dir) };
 
         let mut config = Config::default();
         config.workspace_dir = workspace_dir;
@@ -13693,7 +13708,7 @@ requires_openai_auth = true
         assert_eq!(parsed.default_temperature, 0.5);
 
         // SAFETY: test-only, single-threaded test runner.
-        unsafe { std::env::remove_var("ZEROCLAW_WORKSPACE") };
+        unsafe { std::env::remove_var("APECLAW_WORKSPACE") };
         if let Some(home) = original_home {
             // SAFETY: test-only, single-threaded test runner.
             unsafe { std::env::set_var("HOME", home) };
@@ -13796,12 +13811,12 @@ requires_openai_auth = true
         let mut config = Config::default();
 
         // SAFETY: test-only, single-threaded test runner.
-        unsafe { std::env::set_var("ZEROCLAW_WORKSPACE", "/custom/workspace") };
+        unsafe { std::env::set_var("APECLAW_WORKSPACE", "/custom/workspace") };
         config.apply_env_overrides();
         assert_eq!(config.workspace_dir, PathBuf::from("/custom/workspace"));
 
         // SAFETY: test-only, single-threaded test runner.
-        unsafe { std::env::remove_var("ZEROCLAW_WORKSPACE") };
+        unsafe { std::env::remove_var("APECLAW_WORKSPACE") };
     }
 
     #[test]
@@ -13812,7 +13827,7 @@ requires_openai_auth = true
         let workspace_dir = default_config_dir.join("profile-a");
 
         // SAFETY: test-only, single-threaded test runner.
-        unsafe { std::env::set_var("ZEROCLAW_WORKSPACE", &workspace_dir) };
+        unsafe { std::env::set_var("APECLAW_WORKSPACE", &workspace_dir) };
         let (config_dir, resolved_workspace_dir, source) =
             resolve_runtime_config_dirs(&default_config_dir, &default_workspace_dir)
                 .await
@@ -13823,7 +13838,7 @@ requires_openai_auth = true
         assert_eq!(resolved_workspace_dir, workspace_dir.join("workspace"));
 
         // SAFETY: test-only, single-threaded test runner.
-        unsafe { std::env::remove_var("ZEROCLAW_WORKSPACE") };
+        unsafe { std::env::remove_var("APECLAW_WORKSPACE") };
         let _ = fs::remove_dir_all(default_config_dir).await;
     }
 
@@ -13845,9 +13860,9 @@ requires_openai_auth = true
             .unwrap();
 
         // SAFETY: test-only, single-threaded test runner.
-        unsafe { std::env::set_var("ZEROCLAW_CONFIG_DIR", &explicit_config_dir) };
+        unsafe { std::env::set_var("APECLAW_CONFIG_DIR", &explicit_config_dir) };
         // SAFETY: test-only, single-threaded test runner.
-        unsafe { std::env::remove_var("ZEROCLAW_WORKSPACE") };
+        unsafe { std::env::remove_var("APECLAW_WORKSPACE") };
 
         let (config_dir, resolved_workspace_dir, source) =
             resolve_runtime_config_dirs(&default_config_dir, &default_workspace_dir)
@@ -13862,7 +13877,7 @@ requires_openai_auth = true
         );
 
         // SAFETY: test-only, single-threaded test runner.
-        unsafe { std::env::remove_var("ZEROCLAW_CONFIG_DIR") };
+        unsafe { std::env::remove_var("APECLAW_CONFIG_DIR") };
         let _ = fs::remove_dir_all(default_config_dir).await;
     }
 
@@ -13875,7 +13890,7 @@ requires_openai_auth = true
         let state_path = default_config_dir.join(ACTIVE_WORKSPACE_STATE_FILE);
 
         // SAFETY: test-only, single-threaded test runner.
-        unsafe { std::env::remove_var("ZEROCLAW_WORKSPACE") };
+        unsafe { std::env::remove_var("APECLAW_WORKSPACE") };
         fs::create_dir_all(&default_config_dir).await.unwrap();
         let state = ActiveWorkspaceState {
             config_dir: marker_config_dir.to_string_lossy().into_owned(),
@@ -13903,7 +13918,7 @@ requires_openai_auth = true
         let default_workspace_dir = default_config_dir.join("workspace");
 
         // SAFETY: test-only, single-threaded test runner.
-        unsafe { std::env::remove_var("ZEROCLAW_WORKSPACE") };
+        unsafe { std::env::remove_var("APECLAW_WORKSPACE") };
         let (config_dir, resolved_workspace_dir, source) =
             resolve_runtime_config_dirs(&default_config_dir, &default_workspace_dir)
                 .await
@@ -13927,7 +13942,7 @@ requires_openai_auth = true
         // SAFETY: test-only, single-threaded test runner.
         unsafe { std::env::set_var("HOME", &temp_home) };
         // SAFETY: test-only, single-threaded test runner.
-        unsafe { std::env::set_var("ZEROCLAW_WORKSPACE", &workspace_dir) };
+        unsafe { std::env::set_var("APECLAW_WORKSPACE", &workspace_dir) };
 
         let config = Box::pin(Config::load_or_init()).await.unwrap();
 
@@ -13936,7 +13951,7 @@ requires_openai_auth = true
         assert!(workspace_dir.join("config.toml").exists());
 
         // SAFETY: test-only, single-threaded test runner.
-        unsafe { std::env::remove_var("ZEROCLAW_WORKSPACE") };
+        unsafe { std::env::remove_var("APECLAW_WORKSPACE") };
         if let Some(home) = original_home {
             // SAFETY: test-only, single-threaded test runner.
             unsafe { std::env::set_var("HOME", home) };
@@ -13953,13 +13968,13 @@ requires_openai_auth = true
         let temp_home =
             std::env::temp_dir().join(format!("zeroclaw_test_home_{}", uuid::Uuid::new_v4()));
         let workspace_dir = temp_home.join("workspace");
-        let legacy_config_path = temp_home.join(".zeroclaw").join("config.toml");
+        let legacy_config_path = temp_home.join(".apeclaw").join("config.toml");
 
         let original_home = std::env::var("HOME").ok();
         // SAFETY: test-only, single-threaded test runner.
         unsafe { std::env::set_var("HOME", &temp_home) };
         // SAFETY: test-only, single-threaded test runner.
-        unsafe { std::env::set_var("ZEROCLAW_WORKSPACE", &workspace_dir) };
+        unsafe { std::env::set_var("APECLAW_WORKSPACE", &workspace_dir) };
 
         let config = Box::pin(Config::load_or_init()).await.unwrap();
 
@@ -13968,7 +13983,7 @@ requires_openai_auth = true
         assert!(config.config_path.exists());
 
         // SAFETY: test-only, single-threaded test runner.
-        unsafe { std::env::remove_var("ZEROCLAW_WORKSPACE") };
+        unsafe { std::env::remove_var("APECLAW_WORKSPACE") };
         if let Some(home) = original_home {
             // SAFETY: test-only, single-threaded test runner.
             unsafe { std::env::set_var("HOME", home) };
@@ -13985,7 +14000,7 @@ requires_openai_auth = true
         let temp_home =
             std::env::temp_dir().join(format!("zeroclaw_test_home_{}", uuid::Uuid::new_v4()));
         let workspace_dir = temp_home.join("custom-workspace");
-        let legacy_config_dir = temp_home.join(".zeroclaw");
+        let legacy_config_dir = temp_home.join(".apeclaw");
         let legacy_config_path = legacy_config_dir.join("config.toml");
 
         fs::create_dir_all(&legacy_config_dir).await.unwrap();
@@ -14002,7 +14017,7 @@ default_model = "legacy-model"
         // SAFETY: test-only, single-threaded test runner.
         unsafe { std::env::set_var("HOME", &temp_home) };
         // SAFETY: test-only, single-threaded test runner.
-        unsafe { std::env::set_var("ZEROCLAW_WORKSPACE", &workspace_dir) };
+        unsafe { std::env::set_var("APECLAW_WORKSPACE", &workspace_dir) };
 
         let config = Box::pin(Config::load_or_init()).await.unwrap();
 
@@ -14011,7 +14026,7 @@ default_model = "legacy-model"
         assert_eq!(config.default_model.as_deref(), Some("legacy-model"));
 
         // SAFETY: test-only, single-threaded test runner.
-        unsafe { std::env::remove_var("ZEROCLAW_WORKSPACE") };
+        unsafe { std::env::remove_var("APECLAW_WORKSPACE") };
         if let Some(home) = original_home {
             // SAFETY: test-only, single-threaded test runner.
             unsafe { std::env::set_var("HOME", home) };
@@ -14027,7 +14042,7 @@ default_model = "legacy-model"
         let _env_guard = env_override_lock().await;
         let temp_home =
             std::env::temp_dir().join(format!("zeroclaw_test_home_{}", uuid::Uuid::new_v4()));
-        let config_dir = temp_home.join(".zeroclaw");
+        let config_dir = temp_home.join(".apeclaw");
         let config_path = config_dir.join("config.toml");
 
         fs::create_dir_all(&config_dir).await.unwrap();
@@ -14036,7 +14051,7 @@ default_model = "legacy-model"
         // SAFETY: test-only, single-threaded test runner.
         unsafe { std::env::set_var("HOME", &temp_home) };
         // SAFETY: test-only, single-threaded test runner.
-        unsafe { std::env::remove_var("ZEROCLAW_WORKSPACE") };
+        unsafe { std::env::remove_var("APECLAW_WORKSPACE") };
 
         let mut config = Config::default();
         config.config_path = config_path.clone();
@@ -14075,7 +14090,7 @@ default_model = "legacy-model"
         let _env_guard = env_override_lock().await;
         let temp_home =
             std::env::temp_dir().join(format!("zeroclaw_test_home_{}", uuid::Uuid::new_v4()));
-        let temp_default_dir = temp_home.join(".zeroclaw");
+        let temp_default_dir = temp_home.join(".apeclaw");
         let custom_config_dir = temp_home.join("profiles").join("agent-alpha");
 
         fs::create_dir_all(&custom_config_dir).await.unwrap();
@@ -14103,7 +14118,7 @@ default_model = "legacy-model"
         // SAFETY: test-only, single-threaded test runner.
         unsafe { std::env::set_var("HOME", &temp_home) };
         // SAFETY: test-only, single-threaded test runner.
-        unsafe { std::env::remove_var("ZEROCLAW_WORKSPACE") };
+        unsafe { std::env::remove_var("APECLAW_WORKSPACE") };
 
         let config = Box::pin(Config::load_or_init()).await.unwrap();
 
@@ -14126,7 +14141,7 @@ default_model = "legacy-model"
         let _env_guard = env_override_lock().await;
         let temp_home =
             std::env::temp_dir().join(format!("zeroclaw_test_home_{}", uuid::Uuid::new_v4()));
-        let temp_default_dir = temp_home.join(".zeroclaw");
+        let temp_default_dir = temp_home.join(".apeclaw");
         let marker_config_dir = temp_home.join("profiles").join("persisted-profile");
         let env_workspace_dir = temp_home.join("env-workspace");
 
@@ -14147,7 +14162,7 @@ default_model = "legacy-model"
         // SAFETY: test-only, single-threaded test runner.
         unsafe { std::env::set_var("HOME", &temp_home) };
         // SAFETY: test-only, single-threaded test runner.
-        unsafe { std::env::set_var("ZEROCLAW_WORKSPACE", &env_workspace_dir) };
+        unsafe { std::env::set_var("APECLAW_WORKSPACE", &env_workspace_dir) };
 
         let config = Box::pin(Config::load_or_init()).await.unwrap();
 
@@ -14155,7 +14170,7 @@ default_model = "legacy-model"
         assert_eq!(config.config_path, env_workspace_dir.join("config.toml"));
 
         // SAFETY: test-only, single-threaded test runner.
-        unsafe { std::env::remove_var("ZEROCLAW_WORKSPACE") };
+        unsafe { std::env::remove_var("APECLAW_WORKSPACE") };
         if let Some(home) = original_home {
             // SAFETY: test-only, single-threaded test runner.
             unsafe { std::env::set_var("HOME", home) };
@@ -14170,7 +14185,7 @@ default_model = "legacy-model"
     async fn persist_active_workspace_marker_is_cleared_for_default_config_dir() {
         let temp_home =
             std::env::temp_dir().join(format!("zeroclaw_test_home_{}", uuid::Uuid::new_v4()));
-        let default_config_dir = temp_home.join(".zeroclaw");
+        let default_config_dir = temp_home.join(".apeclaw");
         let custom_config_dir = temp_home.join("profiles").join("custom-profile");
         let marker_path = default_config_dir.join(ACTIVE_WORKSPACE_STATE_FILE);
 
@@ -14212,7 +14227,7 @@ default_model = "persisted-profile"
         // SAFETY: test-only, single-threaded test runner.
         unsafe { std::env::set_var("HOME", &temp_home) };
         // SAFETY: test-only, single-threaded test runner.
-        unsafe { std::env::set_var("ZEROCLAW_WORKSPACE", &workspace_dir) };
+        unsafe { std::env::set_var("APECLAW_WORKSPACE", &workspace_dir) };
 
         let capture = SharedLogBuffer::default();
         let subscriber = tracing_subscriber::fmt()
@@ -14237,7 +14252,7 @@ default_model = "persisted-profile"
         assert!(!logs.contains("initialized=false"), "{logs}");
 
         // SAFETY: test-only, single-threaded test runner.
-        unsafe { std::env::remove_var("ZEROCLAW_WORKSPACE") };
+        unsafe { std::env::remove_var("APECLAW_WORKSPACE") };
         if let Some(home) = original_home {
             // SAFETY: test-only, single-threaded test runner.
             unsafe { std::env::set_var("HOME", home) };
@@ -15152,7 +15167,7 @@ gated_domain_categories = ["banking"]
 
 [security.estop]
 enabled = true
-state_file = "~/.zeroclaw/estop-state.json"
+state_file = "~/.apeclaw/estop-state.json"
 require_otp_to_resume = true
 "#,
         );
@@ -16052,7 +16067,7 @@ require_otp_to_resume = true
     /// Kept here so changes to the Dockerfiles can be validated by `cargo test`.
     const DOCKER_CONFIG_TEMPLATE: &str = r#"
 workspace_dir = "/zeroclaw-data/workspace"
-config_path = "/zeroclaw-data/.zeroclaw/config.toml"
+config_path = "/zeroclaw-data/.apeclaw/config.toml"
 api_key = ""
 default_provider = "openrouter"
 default_model = "anthropic/claude-sonnet-4-20250514"

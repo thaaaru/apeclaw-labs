@@ -519,7 +519,7 @@ impl TelegramChannel {
         let home = UserDirs::new()
             .map(|u| u.home_dir().to_path_buf())
             .context("Could not find home directory")?;
-        let zeroclaw_dir = home.join(".zeroclaw");
+        let zeroclaw_dir = home.join(".apeclaw");
         let config_path = zeroclaw_dir.join("config.toml");
 
         let contents = fs::read_to_string(&config_path)

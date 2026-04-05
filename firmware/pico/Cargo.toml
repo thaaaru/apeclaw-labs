@@ -26,7 +26,7 @@ defmt = "0.3"
 defmt-rtt = "0.4"
 panic-probe = { version = "0.3", features = ["print-defmt"] }
 heapless = { version = "0.9", default-features = false }
-zeroclaw-fw-protocol = { path = "../zeroclaw-fw-protocol" }
+apeclaw-fw-protocol = { path = "../apeclaw-fw-protocol" }
 
 [profile.release]
 opt-level = "s"

@@ -16,7 +16,7 @@
 //!
 //! ```toml
 //! [channels_config.whatsapp]
-//! session_path = "~/.zeroclaw/whatsapp-session.db"  # Required for Web mode
+//! session_path = "~/.apeclaw/whatsapp-session.db"  # Required for Web mode
 //! pair_phone = "15551234567"  # Optional: for pair code linking
 //! allowed_numbers = ["+1234567890", "*"]  # Same as Cloud API
 //! ```
@@ -46,7 +46,7 @@ use wa_rs_proto::whatsapp::device_props::PlatformType;
 ///
 /// ```toml
 /// [channels_config.whatsapp]
-/// session_path = "~/.zeroclaw/whatsapp-session.db"
+/// session_path = "~/.apeclaw/whatsapp-session.db"
 /// pair_phone = "15551234567"  # Optional
 /// allowed_numbers = ["+1234567890", "*"]
 /// ```

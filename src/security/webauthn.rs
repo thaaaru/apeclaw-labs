@@ -204,7 +204,7 @@ impl WebAuthnManager {
     /// Create a new `WebAuthnManager`.
     ///
     /// `storage_dir` is the directory where the encrypted credentials file
-    /// will be stored (typically `~/.zeroclaw/`).
+    /// will be stored (typically `~/.apeclaw/`).
     pub fn new(config: WebAuthnConfig, secret_store: Arc<SecretStore>, storage_dir: &Path) -> Self {
         Self {
             config,

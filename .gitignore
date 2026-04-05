@@ -33,6 +33,11 @@ venv/
 credentials.json
 .worktrees/
 .zeroclaw/*
+.apeclaw/*
+
+# ApeClaw audit logs (may contain sensitive request data)
+logs/apeclaw_audit.log
+logs/
 
 # Skill eval workspaces (test outputs, transcripts, grading)
 .claude/skills/*-workspace/

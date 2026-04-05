@@ -3,15 +3,15 @@ members = [".", "crates/robot-kit", "crates/aardvark-sys", "apps/tauri"]
 resolver = "2"
 
 [package]
-name = "zeroclawlabs"
-version = "0.6.8"
+name = "apeclaw"
+version = "0.1.0-alpha"
 edition = "2024"
-authors = ["theonlyhennygod"]
+authors = ["Tharaka Kaushalya Mahabage"]
 license = "MIT OR Apache-2.0"
-description = "Zero overhead. Zero compromise. 100% Rust. The fastest, smallest AI assistant."
-repository = "https://github.com/zeroclaw-labs/zeroclaw"
+description = "Our Claw — Lightweight Sovereign AI Agent for Sri Lanka. Zero overhead. 100% Rust."
+repository = "https://github.com/apeclaw-labs/apeclaw"
 readme = "README.md"
-keywords = ["ai", "agent", "cli", "assistant", "chatbot"]
+keywords = ["ai", "agent", "cli", "sri-lanka", "sovereign"]
 categories = ["command-line-utilities", "api-bindings"]
 rust-version = "1.87"
 include = [
@@ -26,11 +26,11 @@ include = [
 ]
 
 [[bin]]
-name = "zeroclaw"
+name = "apeclaw"
 path = "src/main.rs"
 
 [lib]
-name = "zeroclaw"
+name = "apeclaw"
 path = "src/lib.rs"
 
 [dependencies]

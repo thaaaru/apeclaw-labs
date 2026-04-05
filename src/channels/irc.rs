@@ -18,7 +18,7 @@ static MSG_SEQ: AtomicU64 = AtomicU64::new(0);
 /// IRC over TLS channel.
 ///
 /// Connects to an IRC server using TLS, joins configured channels,
-/// and forwards PRIVMSG messages to the `ZeroClaw` message bus.
+/// and forwards PRIVMSG messages to the `ApeClaw` message bus.
 /// Supports both channel messages and private messages (DMs).
 pub struct IrcChannel {
     server: String,

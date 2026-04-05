@@ -152,7 +152,7 @@ fn show_integration_info(config: &Config, name: &str) -> Result<()> {
         }
         "Cron" => {
             println!("  Built-in:");
-            println!("    Schedule tasks in ~/.zeroclaw/workspace/cron/");
+            println!("    Schedule tasks in ~/.apeclaw/workspace/cron/");
             println!("    Run: zeroclaw cron list");
         }
         "Weather" => {

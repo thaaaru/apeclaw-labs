@@ -5,8 +5,8 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::str::FromStr;
 
-const SERVICE_LABEL: &str = "com.zeroclaw.daemon";
-const WINDOWS_TASK_NAME: &str = "ZeroClaw Daemon";
+const SERVICE_LABEL: &str = "com.apeclaw.daemon";
+const WINDOWS_TASK_NAME: &str = "ApeClaw Daemon";
 
 /// Supported init systems for service management
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
@@ -114,13 +114,13 @@ pub fn is_running() -> bool {
 
 fn is_running_linux() -> bool {
     // Try systemd first, then OpenRC — mirrors detect_init_system() order
-    if run_capture(Command::new("systemctl").args(["--user", "is-active", "zeroclaw.service"]))
+    if run_capture(Command::new("systemctl").args(["--user", "is-active", "apeclaw.service"]))
         .map(|out| out.trim() == "active")
         .unwrap_or(false)
     {
         return true;
     }
-    run_capture(Command::new("rc-service").args(["zeroclaw", "status"]))
+    run_capture(Command::new("rc-service").args(["apeclaw", "status"]))
         .map(|out| out.contains("started"))
         .unwrap_or(false)
 }
@@ -189,10 +189,10 @@ fn start_linux(init_system: InitSystem) -> Result<()> {
     match init_system {
         InitSystem::Systemd => {
             run_checked(Command::new("systemctl").args(["--user", "daemon-reload"]))?;
-            run_checked(Command::new("systemctl").args(["--user", "start", "zeroclaw.service"]))?;
+            run_checked(Command::new("systemctl").args(["--user", "start", "apeclaw.service"]))?;
         }
         InitSystem::Openrc => {
-            run_checked(Command::new("rc-service").args(["zeroclaw", "start"]))?;
+            run_checked(Command::new("rc-service").args(["apeclaw", "start"]))?;
         }
         InitSystem::Auto => unreachable!("Auto should be resolved before this point"),
     }
@@ -231,10 +231,10 @@ fn stop_linux(init_system: InitSystem) -> Result<()> {
     match init_system {
         InitSystem::Systemd => {
             let _ =
-                run_checked(Command::new("systemctl").args(["--user", "stop", "zeroclaw.service"]));
+                run_checked(Command::new("systemctl").args(["--user", "stop", "apeclaw.service"]));
         }
         InitSystem::Openrc => {
-            let _ = run_checked(Command::new("rc-service").args(["zeroclaw", "stop"]));
+            let _ = run_checked(Command::new("rc-service").args(["apeclaw", "stop"]));
         }
         InitSystem::Auto => unreachable!("Auto should be resolved before this point"),
     }
@@ -269,10 +269,10 @@ fn restart_linux(init_system: InitSystem) -> Result<()> {
     match init_system {
         InitSystem::Systemd => {
             run_checked(Command::new("systemctl").args(["--user", "daemon-reload"]))?;
-            run_checked(Command::new("systemctl").args(["--user", "restart", "zeroclaw.service"]))?;
+            run_checked(Command::new("systemctl").args(["--user", "restart", "apeclaw.service"]))?;
         }
         InitSystem::Openrc => {
-            run_checked(Command::new("rc-service").args(["zeroclaw", "restart"]))?;
+            run_checked(Command::new("rc-service").args(["apeclaw", "restart"]))?;
         }
         InitSystem::Auto => unreachable!("Auto should be resolved before this point"),
     }
@@ -335,17 +335,17 @@ fn status_linux(config: &Config, init_system: InitSystem) -> Result<()> {
             let out = run_capture(Command::new("systemctl").args([
                 "--user",
                 "is-active",
-                "zeroclaw.service",
+                "apeclaw.service",
             ]))
             .unwrap_or_else(|_| "unknown".into());
             println!("Service state: {}", out.trim());
             println!("Unit: {}", linux_service_file(config)?.display());
         }
         InitSystem::Openrc => {
-            let out = run_capture(Command::new("rc-service").args(["zeroclaw", "status"]))
+            let out = run_capture(Command::new("rc-service").args(["apeclaw", "status"]))
                 .unwrap_or_else(|_| "unknown".into());
             println!("Service state: {}", out.trim());
-            println!("Unit: /etc/init.d/zeroclaw");
+            println!("Unit: /etc/init.d/apeclaw");
         }
         InitSystem::Auto => unreachable!("Auto should be resolved before this point"),
     }
@@ -424,7 +424,7 @@ fn logs_linux(config: &Config, init_system: InitSystem, lines: usize, follow: bo
             let mut args = vec![
                 "--user".to_string(),
                 "-u".to_string(),
-                "zeroclaw.service".to_string(),
+                "apeclaw.service".to_string(),
                 "-n".to_string(),
                 lines.to_string(),
                 "--no-pager".to_string(),
@@ -441,13 +441,13 @@ fn logs_linux(config: &Config, init_system: InitSystem, lines: usize, follow: bo
             }
         }
         InitSystem::Openrc => {
-            // OpenRC logs go to /var/log/zeroclaw/error.log (as configured in the init script)
-            let log_file = Path::new("/var/log/zeroclaw/error.log");
+            // OpenRC logs go to /var/log/apeclaw/error.log (as configured in the init script)
+            let log_file = Path::new("/var/log/apeclaw/error.log");
             if !log_file.exists() {
                 // Fall back to access log
-                let access_log = Path::new("/var/log/zeroclaw/access.log");
+                let access_log = Path::new("/var/log/apeclaw/access.log");
                 if !access_log.exists() {
-                    bail!("No log files found at /var/log/zeroclaw/. Is the service installed?");
+                    bail!("No log files found at /var/log/apeclaw/. Is the service installed?");
                 }
                 return tail_file(access_log, lines, follow);
             }
@@ -555,7 +555,7 @@ fn uninstall(config: &Config, init_system: InitSystem) -> Result<()> {
             .parent()
             .map_or_else(|| PathBuf::from("."), PathBuf::from)
             .join("logs")
-            .join("zeroclaw-daemon.cmd");
+            .join("apeclaw-daemon.cmd");
         if wrapper.exists() {
             fs::remove_file(&wrapper).ok();
         }
@@ -578,7 +578,7 @@ fn uninstall_linux(config: &Config, init_system: InitSystem) -> Result<()> {
             println!("✅ Service uninstalled ({})", file.display());
         }
         InitSystem::Openrc => {
-            let init_script = Path::new("/etc/init.d/zeroclaw");
+            let init_script = Path::new("/etc/init.d/apeclaw");
             if init_script.exists() {
                 if let Err(err) =
                     run_checked(Command::new("rc-update").args(["del", "zeroclaw", "default"]))
@@ -590,7 +590,7 @@ fn uninstall_linux(config: &Config, init_system: InitSystem) -> Result<()> {
                 fs::remove_file(init_script)
                     .with_context(|| format!("Failed to remove {}", init_script.display()))?;
             }
-            println!("✅ Service uninstalled (/etc/init.d/zeroclaw)");
+            println!("✅ Service uninstalled (/etc/init.d/apeclaw)");
         }
         InitSystem::Auto => unreachable!("Auto should be resolved before this point"),
     }
@@ -671,13 +671,13 @@ fn install_macos(config: &Config) -> Result<()> {
     let stdout = logs_dir.join("daemon.stdout.log");
     let stderr = logs_dir.join("daemon.stderr.log");
 
-    // When running under Homebrew, inject ZEROCLAW_CONFIG_DIR and
+    // When running under Homebrew, inject APECLAW_CONFIG_DIR and
     // WorkingDirectory so the daemon finds its data in the Homebrew prefix.
     let env_section = if let Some(ref var_dir) = homebrew_var_dir {
         format!(
             r#"  <key>EnvironmentVariables</key>
   <dict>
-    <key>ZEROCLAW_CONFIG_DIR</key>
+    <key>APECLAW_CONFIG_DIR</key>
     <string>{config_dir}</string>
   </dict>
   <key>WorkingDirectory</key>
@@ -767,7 +767,7 @@ fn install_linux_systemd(config: &Config) -> Result<()> {
 
     fs::write(&file, unit)?;
     let _ = run_checked(Command::new("systemctl").args(["--user", "daemon-reload"]));
-    let _ = run_checked(Command::new("systemctl").args(["--user", "enable", "zeroclaw.service"]));
+    let _ = run_checked(Command::new("systemctl").args(["--user", "enable", "apeclaw.service"]));
     println!("✅ Installed systemd user service: {}", file.display());
     println!("   Start with: zeroclaw service start");
     Ok(())
@@ -1002,7 +1002,7 @@ fn resolve_invoking_user_config_dir() -> Option<PathBuf> {
                 let entry = String::from_utf8_lossy(&output.stdout);
                 let fields: Vec<&str> = entry.trim().split(':').collect();
                 if fields.len() >= 6 {
-                    return Some(PathBuf::from(fields[5]).join(".zeroclaw"));
+                    return Some(PathBuf::from(fields[5]).join(".apeclaw"));
                 }
             }
         }
@@ -1011,7 +1011,7 @@ fn resolve_invoking_user_config_dir() -> Option<PathBuf> {
     std::env::var("HOME")
         .ok()
         .map(PathBuf::from)
-        .map(|home| home.join(".zeroclaw"))
+        .map(|home| home.join(".apeclaw"))
 }
 
 fn migrate_openrc_runtime_state_if_needed(config_dir: &Path) -> Result<()> {
@@ -1156,8 +1156,8 @@ command_background="yes"
 command_user="zeroclaw:zeroclaw"
 pidfile="/run/${{RC_SVCNAME}}.pid"
 umask 027
-output_log="/var/log/zeroclaw/access.log"
-error_log="/var/log/zeroclaw/error.log"
+output_log="/var/log/apeclaw/access.log"
+error_log="/var/log/apeclaw/error.log"
 
 # Provide HOME so headless browsers can create profile/cache directories.
 # Without this, Chromium/Firefox fail with sandbox or profile errors.
@@ -1202,7 +1202,7 @@ fn install_linux_openrc(config: &Config) -> Result<()> {
 
     let config_dir = Path::new("/etc/zeroclaw");
     let workspace_dir = config_dir.join("workspace");
-    let log_dir = Path::new("/var/log/zeroclaw");
+    let log_dir = Path::new("/var/log/apeclaw");
 
     if !config_dir.exists() {
         fs::create_dir_all(config_dir)
@@ -1288,7 +1288,7 @@ fn install_linux_openrc(config: &Config) -> Result<()> {
     }
 
     let init_script = generate_openrc_script(&exe, config_dir);
-    let init_path = Path::new("/etc/init.d/zeroclaw");
+    let init_path = Path::new("/etc/init.d/apeclaw");
     fs::write(init_path, init_script)
         .with_context(|| format!("Failed to write {}", init_path.display()))?;
 
@@ -1300,7 +1300,7 @@ fn install_linux_openrc(config: &Config) -> Result<()> {
     }
 
     run_checked(Command::new("rc-update").args(["add", "zeroclaw", "default"]))?;
-    println!("✅ Installed OpenRC service: /etc/init.d/zeroclaw");
+    println!("✅ Installed OpenRC service: /etc/init.d/apeclaw");
     println!("   Config path: /etc/zeroclaw/config.toml");
     println!("   Start with: sudo zeroclaw service start");
     let _ = config;
@@ -1317,7 +1317,7 @@ fn install_windows(config: &Config) -> Result<()> {
     fs::create_dir_all(&logs_dir)?;
 
     // Create a wrapper script that redirects output to log files
-    let wrapper = logs_dir.join("zeroclaw-daemon.cmd");
+    let wrapper = logs_dir.join("apeclaw-daemon.cmd");
     let stdout_log = logs_dir.join("daemon.stdout.log");
     let stderr_log = logs_dir.join("daemon.stderr.log");
 
@@ -1375,7 +1375,7 @@ fn linux_service_file(config: &Config) -> Result<PathBuf> {
         .join(".config")
         .join("systemd")
         .join("user")
-        .join("zeroclaw.service"))
+        .join("apeclaw.service"))
 }
 
 fn run_checked(command: &mut Command) -> Result<()> {
@@ -1443,12 +1443,12 @@ mod tests {
     fn linux_service_file_has_expected_suffix() {
         let file = linux_service_file(&Config::default()).unwrap();
         let path = file.to_string_lossy();
-        assert!(path.ends_with(".config/systemd/user/zeroclaw.service"));
+        assert!(path.ends_with(".config/systemd/user/apeclaw.service"));
     }
 
     #[test]
     fn windows_task_name_is_constant() {
-        assert_eq!(windows_task_name(), "ZeroClaw Daemon");
+        assert_eq!(windows_task_name(), "ApeClaw Daemon");
     }
 
     #[cfg(target_os = "windows")]
@@ -1518,14 +1518,14 @@ mod tests {
         assert!(script.contains("description=\"ZeroClaw daemon\""));
         assert!(script.contains("command=\"/usr/local/bin/zeroclaw\""));
         assert!(script.contains("command_args=\"--config-dir /etc/zeroclaw daemon\""));
-        assert!(!script.contains("env ZEROCLAW_CONFIG_DIR"));
-        assert!(!script.contains("env ZEROCLAW_WORKSPACE"));
+        assert!(!script.contains("env APECLAW_CONFIG_DIR"));
+        assert!(!script.contains("env APECLAW_WORKSPACE"));
         assert!(script.contains("command_background=\"yes\""));
         assert!(script.contains("command_user=\"zeroclaw:zeroclaw\""));
         assert!(script.contains("pidfile=\"/run/${RC_SVCNAME}.pid\""));
         assert!(script.contains("umask 027"));
-        assert!(script.contains("output_log=\"/var/log/zeroclaw/access.log\""));
-        assert!(script.contains("error_log=\"/var/log/zeroclaw/error.log\""));
+        assert!(script.contains("output_log=\"/var/log/apeclaw/access.log\""));
+        assert!(script.contains("error_log=\"/var/log/apeclaw/error.log\""));
         assert!(script.contains("depend()"));
         assert!(script.contains("need net"));
         assert!(script.contains("after firewall"));

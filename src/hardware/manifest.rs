@@ -1,4 +1,4 @@
-//! Plugin manifest — `~/.zeroclaw/tools/<name>/tool.toml` schema.
+//! Plugin manifest — `~/.apeclaw/tools/<name>/tool.toml` schema.
 //!
 //! Each user plugin lives in its own subdirectory and carries a `tool.toml`
 //! that describes the tool, how to invoke it, and what parameters it accepts.

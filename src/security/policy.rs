@@ -2108,13 +2108,13 @@ mod tests {
     #[test]
     fn absolute_path_inside_workspace_allowed_when_workspace_only() {
         let p = SecurityPolicy {
-            workspace_dir: PathBuf::from("/home/user/.zeroclaw/workspace"),
+            workspace_dir: PathBuf::from("/home/user/.apeclaw/workspace"),
             workspace_only: true,
             ..SecurityPolicy::default()
         };
         // Absolute path inside workspace should be allowed
-        assert!(p.is_path_allowed("/home/user/.zeroclaw/workspace/images/example.png"));
-        assert!(p.is_path_allowed("/home/user/.zeroclaw/workspace/file.txt"));
+        assert!(p.is_path_allowed("/home/user/.apeclaw/workspace/images/example.png"));
+        assert!(p.is_path_allowed("/home/user/.apeclaw/workspace/file.txt"));
         // Absolute path outside workspace should still be blocked
         assert!(!p.is_path_allowed("/home/user/other/file.txt"));
         assert!(!p.is_path_allowed("/tmp/file.txt"));
@@ -2123,15 +2123,15 @@ mod tests {
     #[test]
     fn absolute_path_in_allowed_root_permitted_when_workspace_only() {
         let p = SecurityPolicy {
-            workspace_dir: PathBuf::from("/home/user/.zeroclaw/workspace"),
+            workspace_dir: PathBuf::from("/home/user/.apeclaw/workspace"),
             workspace_only: true,
-            allowed_roots: vec![PathBuf::from("/home/user/.zeroclaw/shared")],
+            allowed_roots: vec![PathBuf::from("/home/user/.apeclaw/shared")],
             ..SecurityPolicy::default()
         };
         // Path in allowed root should be permitted
-        assert!(p.is_path_allowed("/home/user/.zeroclaw/shared/data.txt"));
+        assert!(p.is_path_allowed("/home/user/.apeclaw/shared/data.txt"));
         // Path in workspace should still be permitted
-        assert!(p.is_path_allowed("/home/user/.zeroclaw/workspace/file.txt"));
+        assert!(p.is_path_allowed("/home/user/.apeclaw/workspace/file.txt"));
         // Path outside both should still be blocked
         assert!(!p.is_path_allowed("/home/user/other/file.txt"));
     }

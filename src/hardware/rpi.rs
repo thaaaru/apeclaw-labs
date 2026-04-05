@@ -273,13 +273,13 @@ impl RpiSystemContext {
         s
     }
 
-    /// Write an `rpi0.md` hardware context file to `~/.zeroclaw/hardware/devices/`.
+    /// Write an `rpi0.md` hardware context file to `~/.apeclaw/hardware/devices/`.
     /// Silently skips on failure so boot is never blocked.
     pub fn write_hardware_context_file(&self) {
         let Some(home) = directories::BaseDirs::new().map(|b| b.home_dir().to_path_buf()) else {
             return;
         };
-        let devices_dir = home.join(".zeroclaw").join("hardware").join("devices");
+        let devices_dir = home.join(".apeclaw").join("hardware").join("devices");
         if let Err(e) = fs::create_dir_all(&devices_dir) {
             tracing::warn!("Failed to create hardware devices dir: {e}");
             return;

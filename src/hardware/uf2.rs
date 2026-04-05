@@ -4,7 +4,7 @@
 //! 1. [`find_rpi_rp2_mount`] — check well-known mount points for the RPI-RP2 volume
 //!    that appears when a Pico is held in BOOTSEL mode.
 //! 2. [`ensure_firmware_dir`] — extract the bundled UF2 to
-//!    `~/.zeroclaw/firmware/pico/` if it isn't there yet.
+//!    `~/.apeclaw/firmware/pico/` if it isn't there yet.
 //! 3. [`flash_uf2`] — copy the UF2 to the mount point; the Pico reboots automatically.
 //!
 //! # Embedded assets
@@ -53,7 +53,7 @@ pub fn find_rpi_rp2_mount() -> Option<PathBuf> {
 
 // ── Firmware directory management ─────────────────────────────────────────────
 
-/// Ensure `~/.zeroclaw/firmware/pico/` exists and contains the bundled assets.
+/// Ensure `~/.apeclaw/firmware/pico/` exists and contains the bundled assets.
 ///
 /// Files are only written if they are absent — existing files are never overwritten
 /// so users can substitute their own firmware.
@@ -66,7 +66,7 @@ pub fn ensure_firmware_dir() -> Result<PathBuf> {
 
     let firmware_dir = base
         .home_dir()
-        .join(".zeroclaw")
+        .join(".apeclaw")
         .join("firmware")
         .join("pico");
     std::fs::create_dir_all(&firmware_dir)?;
@@ -273,7 +273,7 @@ mod tests {
 
     #[test]
     fn ensure_firmware_dir_creates_directory() {
-        // This test verifies ensure_firmware_dir creates the ~/.zeroclaw/firmware/pico/ path.
+        // This test verifies ensure_firmware_dir creates the ~/.apeclaw/firmware/pico/ path.
         // It may fail on the UF2 magic check (placeholder UF2) — that's expected and OK.
         let result = ensure_firmware_dir();
         // Either succeeds (real UF2) or fails with a clear placeholder message.

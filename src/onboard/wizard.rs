@@ -151,6 +151,7 @@ pub async fn run_wizard(force: bool) -> Result<Config> {
         cloud_ops: crate::config::CloudOpsConfig::default(),
         conversational_ai: crate::config::ConversationalAiConfig::default(),
         security: crate::config::SecurityConfig::default(),
+        sl_audit_enabled: true,
         security_ops: crate::config::SecurityOpsConfig::default(),
         runtime: RuntimeConfig::default(),
         reliability: crate::config::ReliabilityConfig::default(),
@@ -473,7 +474,7 @@ pub async fn run_quick_setup(
 }
 
 fn resolve_quick_setup_dirs_with_home(home: &Path) -> (PathBuf, PathBuf) {
-    if let Ok(custom_config_dir) = std::env::var("ZEROCLAW_CONFIG_DIR") {
+    if let Ok(custom_config_dir) = std::env::var("APECLAW_CONFIG_DIR") {
         let trimmed = custom_config_dir.trim();
         if !trimmed.is_empty() {
             let config_dir = PathBuf::from(shellexpand::tilde(trimmed).as_ref());
@@ -481,7 +482,7 @@ fn resolve_quick_setup_dirs_with_home(home: &Path) -> (PathBuf, PathBuf) {
         }
     }
 
-    if let Ok(custom_workspace) = std::env::var("ZEROCLAW_WORKSPACE") {
+    if let Ok(custom_workspace) = std::env::var("APECLAW_WORKSPACE") {
         let trimmed = custom_workspace.trim();
         if !trimmed.is_empty() {
             let expanded = shellexpand::tilde(trimmed);
@@ -492,7 +493,7 @@ fn resolve_quick_setup_dirs_with_home(home: &Path) -> (PathBuf, PathBuf) {
     }
 
     // If the binary was installed via Homebrew, use the Homebrew var path
-    // instead of ~/.zeroclaw so the Homebrew service finds the same config.
+    // instead of ~/.apeclaw so the Homebrew service finds the same config.
     if let Some(prefix) = std::env::current_exe()
         .ok()
         .as_deref()
@@ -502,7 +503,7 @@ fn resolve_quick_setup_dirs_with_home(home: &Path) -> (PathBuf, PathBuf) {
         return (config_dir.clone(), config_dir.join("workspace"));
     }
 
-    let config_dir = home.join(".zeroclaw");
+    let config_dir = home.join(".apeclaw");
     (config_dir.clone(), config_dir.join("workspace"))
 }
 
@@ -609,6 +610,7 @@ async fn run_quick_setup_with_home(
         cloud_ops: crate::config::CloudOpsConfig::default(),
         conversational_ai: crate::config::ConversationalAiConfig::default(),
         security: crate::config::SecurityConfig::default(),
+        sl_audit_enabled: true,
         security_ops: crate::config::SecurityOpsConfig::default(),
         runtime: RuntimeConfig::default(),
         reliability: crate::config::ReliabilityConfig::default(),
@@ -787,7 +789,7 @@ async fn run_quick_setup_with_home(
         } else {
             let env_var = provider_env_var(&provider_name);
             println!("    1. Set your API key:  export {env_var}=\"sk-...\"");
-            println!("    2. Or edit:           ~/.zeroclaw/config.toml");
+            println!("    2. Or edit:           ~/.apeclaw/config.toml");
             println!("    3. Chat:              zeroclaw agent -m \"Hello!\"");
             println!("    4. Gateway:           zeroclaw gateway");
         }
@@ -4554,7 +4556,7 @@ fn setup_channels(existing: Option<ChannelsConfig>) -> Result<ChannelsConfig> {
 
                     let session_path: String = Input::new()
                         .with_prompt("  Session database path")
-                        .default("~/.zeroclaw/state/whatsapp-web/session.db")
+                        .default("~/.apeclaw/state/whatsapp-web/session.db")
                         .interact_text()?;
 
                     if session_path.trim().is_empty() {
@@ -6328,8 +6330,8 @@ mod tests {
     #[tokio::test]
     async fn quick_setup_model_override_persists_to_config_toml() {
         let _env_guard = env_lock().lock().await;
-        let _workspace_env = EnvVarGuard::unset("ZEROCLAW_WORKSPACE");
-        let _config_env = EnvVarGuard::unset("ZEROCLAW_CONFIG_DIR");
+        let _workspace_env = EnvVarGuard::unset("APECLAW_WORKSPACE");
+        let _config_env = EnvVarGuard::unset("APECLAW_CONFIG_DIR");
         let tmp = TempDir::new().unwrap();
 
         let config = Box::pin(run_quick_setup_with_home(
@@ -6355,8 +6357,8 @@ mod tests {
     #[tokio::test]
     async fn quick_setup_without_model_uses_provider_default_model() {
         let _env_guard = env_lock().lock().await;
-        let _workspace_env = EnvVarGuard::unset("ZEROCLAW_WORKSPACE");
-        let _config_env = EnvVarGuard::unset("ZEROCLAW_CONFIG_DIR");
+        let _workspace_env = EnvVarGuard::unset("APECLAW_WORKSPACE");
+        let _config_env = EnvVarGuard::unset("APECLAW_CONFIG_DIR");
         let tmp = TempDir::new().unwrap();
 
         let config = Box::pin(run_quick_setup_with_home(
@@ -6378,10 +6380,10 @@ mod tests {
     #[tokio::test]
     async fn quick_setup_existing_config_requires_force_when_non_interactive() {
         let _env_guard = env_lock().lock().await;
-        let _workspace_env = EnvVarGuard::unset("ZEROCLAW_WORKSPACE");
-        let _config_env = EnvVarGuard::unset("ZEROCLAW_CONFIG_DIR");
+        let _workspace_env = EnvVarGuard::unset("APECLAW_WORKSPACE");
+        let _config_env = EnvVarGuard::unset("APECLAW_CONFIG_DIR");
         let tmp = TempDir::new().unwrap();
-        let zeroclaw_dir = tmp.path().join(".zeroclaw");
+        let zeroclaw_dir = tmp.path().join(".apeclaw");
         let config_path = zeroclaw_dir.join("config.toml");
 
         tokio::fs::create_dir_all(&zeroclaw_dir).await.unwrap();
@@ -6408,10 +6410,10 @@ mod tests {
     #[tokio::test]
     async fn quick_setup_existing_config_overwrites_with_force() {
         let _env_guard = env_lock().lock().await;
-        let _workspace_env = EnvVarGuard::unset("ZEROCLAW_WORKSPACE");
-        let _config_env = EnvVarGuard::unset("ZEROCLAW_CONFIG_DIR");
+        let _workspace_env = EnvVarGuard::unset("APECLAW_WORKSPACE");
+        let _config_env = EnvVarGuard::unset("APECLAW_CONFIG_DIR");
         let tmp = TempDir::new().unwrap();
-        let zeroclaw_dir = tmp.path().join(".zeroclaw");
+        let zeroclaw_dir = tmp.path().join(".apeclaw");
         let config_path = zeroclaw_dir.join("config.toml");
 
         tokio::fs::create_dir_all(&zeroclaw_dir).await.unwrap();
@@ -6448,13 +6450,13 @@ mod tests {
         let tmp = TempDir::new().unwrap();
         let workspace_root = tmp.path().join("zeroclaw-data");
         let workspace_dir = workspace_root.join("workspace");
-        let expected_config_path = workspace_root.join(".zeroclaw").join("config.toml");
+        let expected_config_path = workspace_root.join(".apeclaw").join("config.toml");
 
         let _workspace_env = EnvVarGuard::set(
-            "ZEROCLAW_WORKSPACE",
+            "APECLAW_WORKSPACE",
             workspace_dir.to_string_lossy().as_ref(),
         );
-        let _config_env = EnvVarGuard::unset("ZEROCLAW_CONFIG_DIR");
+        let _config_env = EnvVarGuard::unset("APECLAW_CONFIG_DIR");
 
         let config = Box::pin(run_quick_setup_with_home(
             Some("sk-env"),
@@ -6465,7 +6467,7 @@ mod tests {
             tmp.path(),
         ))
         .await
-        .expect("quick setup should honor ZEROCLAW_WORKSPACE");
+        .expect("quick setup should honor APECLAW_WORKSPACE");
 
         assert_eq!(config.workspace_dir, workspace_dir);
         assert_eq!(config.config_path, expected_config_path);
@@ -6493,15 +6495,15 @@ mod tests {
     #[test]
     fn quick_setup_homebrew_service_note_mentions_service_workspace() {
         let note = quick_setup_homebrew_service_note(
-            Path::new("/Users/alix/.zeroclaw/config.toml"),
-            Path::new("/Users/alix/.zeroclaw/workspace"),
+            Path::new("/Users/alix/.apeclaw/config.toml"),
+            Path::new("/Users/alix/.apeclaw/workspace"),
             Path::new("/opt/homebrew/bin/zeroclaw"),
         )
         .expect("homebrew installs should emit a service workspace note");
 
         assert!(note.contains("/opt/homebrew/var/zeroclaw/workspace"));
         assert!(note.contains("/opt/homebrew/var/zeroclaw/config.toml"));
-        assert!(note.contains("/Users/alix/.zeroclaw/config.toml"));
+        assert!(note.contains("/Users/alix/.apeclaw/config.toml"));
     }
 
     #[test]

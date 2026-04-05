@@ -106,18 +106,18 @@ pub struct HardwareBootResult {
     pub tools: Vec<Box<dyn crate::tools::Tool>>,
     /// Human-readable device summary for the LLM system prompt.
     pub device_summary: String,
-    /// Content of `~/.zeroclaw/hardware/` context files (HARDWARE.md, device
+    /// Content of `~/.apeclaw/hardware/` context files (HARDWARE.md, device
     /// profiles, and skills) for injection into the system prompt.
     pub context_files_prompt: String,
 }
 
-/// Load hardware context files from `~/.zeroclaw/hardware/` and return them
+/// Load hardware context files from `~/.apeclaw/hardware/` and return them
 /// concatenated as a single markdown string ready for system-prompt injection.
 ///
 /// Reads (if they exist):
-/// 1. `~/.zeroclaw/hardware/HARDWARE.md`
-/// 2. `~/.zeroclaw/hardware/devices/<alias>.md` for each discovered alias
-/// 3. All `~/.zeroclaw/hardware/skills/*.md` files (sorted by name)
+/// 1. `~/.apeclaw/hardware/HARDWARE.md`
+/// 2. `~/.apeclaw/hardware/devices/<alias>.md` for each discovered alias
+/// 3. All `~/.apeclaw/hardware/skills/*.md` files (sorted by name)
 ///
 /// Missing files are silently skipped. Returns an empty string when no files
 /// are found.
@@ -126,7 +126,7 @@ pub fn load_hardware_context_prompt(aliases: &[&str]) -> String {
         Some(h) => h,
         None => return String::new(),
     };
-    load_hardware_context_from_dir(&home.join(".zeroclaw").join("hardware"), aliases)
+    load_hardware_context_from_dir(&home.join(".apeclaw").join("hardware"), aliases)
 }
 
 /// Inner helper that reads hardware context from an explicit base directory.
@@ -233,7 +233,7 @@ fn inject_rpi_context(
 /// discovery. [`HardwareSerialTransport`] opens the port lazily per-send,
 /// so this succeeds even when the port doesn't exist at startup.
 ///
-/// Without the feature: loads plugin tools from `~/.zeroclaw/tools/` only,
+/// Without the feature: loads plugin tools from `~/.apeclaw/tools/` only,
 /// with an empty device registry (GPIO tools will report "no device found"
 /// if called, which is correct).
 #[cfg(feature = "hardware")]
@@ -718,7 +718,7 @@ mod tests {
         // the device_exec rule so the LLM knows to use it for blink/loops.
         // This acts as the Section 5 BUG-2 behavioral gate.
         if let Some(home) = directories::BaseDirs::new().map(|d| d.home_dir().to_path_buf()) {
-            let hw_md = home.join(".zeroclaw").join("hardware").join("HARDWARE.md");
+            let hw_md = home.join(".apeclaw").join("hardware").join("HARDWARE.md");
             if hw_md.exists() {
                 let content = fs::read_to_string(&hw_md).unwrap_or_default();
                 assert!(

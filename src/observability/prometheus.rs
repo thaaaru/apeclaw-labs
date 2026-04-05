@@ -89,7 +89,7 @@ impl PrometheusObserver {
         .expect("valid metric");
 
         let heartbeat_ticks =
-            prometheus::IntCounter::new("zeroclaw_heartbeat_ticks_total", "Total heartbeat ticks")
+            prometheus::IntCounter::new("apeclaw_heartbeat_ticks_total", "Total heartbeat ticks")
                 .expect("valid metric");
 
         let errors = IntCounterVec::new(
@@ -226,7 +226,7 @@ impl PrometheusObserver {
         .expect("valid metric");
 
         let mttr =
-            prometheus::Gauge::new("zeroclaw_mttr_seconds", "Mean time to recovery in seconds")
+            prometheus::Gauge::new("apeclaw_mttr_seconds", "Mean time to recovery in seconds")
                 .expect("valid metric");
 
         // Register all metrics
@@ -593,7 +593,7 @@ mod tests {
         let output = obs.encode();
         assert!(output.contains("zeroclaw_agent_starts_total"));
         assert!(output.contains("zeroclaw_tool_calls_total"));
-        assert!(output.contains("zeroclaw_heartbeat_ticks_total"));
+        assert!(output.contains("apeclaw_heartbeat_ticks_total"));
         assert!(output.contains("zeroclaw_request_latency_seconds"));
     }
 

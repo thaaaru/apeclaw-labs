@@ -33,7 +33,7 @@ const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 // ── Docs base URL ───────────────────────────────────────────────────
 
-const DOCS_BASE: &str = "https://www.zeroclawlabs.ai/docs";
+const DOCS_BASE: &str = "https://www.apeclawlabs.ai/docs";
 
 // ── Screens ─────────────────────────────────────────────────────────
 
