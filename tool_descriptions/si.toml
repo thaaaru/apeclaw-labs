@@ -1,0 +1,36 @@
+# සිංහල මෙවලම් විස්තර (Sinhala tool descriptions)
+#
+# ApeClaw — ශ්‍රී ලංකාවේ ස්වෛරී AI කාරක
+# Our Claw — Sovereign AI Agent for Sri Lanka
+#
+# Each key under [tools] matches the tool's name() return value.
+# Values are the human-readable descriptions shown in system prompts.
+
+[tools]
+backup = "වැඩකරන අවකාශයේ උපස්ථ සාදන්න, ලැයිස්තු කරන්න, සත්‍යාපනය කරන්න සහ යථා තත්ත්වයට පත් කරන්න"
+browser = "වෙබ් / බ්‍රව්සර් ස්වයංක්‍රීයකරණය. DOM ක්‍රියා සහ OS මට්ටමේ ක්‍රියා සඳහා සහාය දක්වයි."
+browser_open = "අනුමත HTTPS URL එකක් පද්ධති බ්‍රව්සරයේ විවෘත කරන්න. ආරක්ෂක සීමා: අනුමත වසම් පමණි."
+cloud_ops = "Cloud පරිවර්තන උපදේශන මෙවලම. IaC සැලසුම් විශ්ලේෂණය කරයි, සංක්‍රමණ මාර්ග තක්සේරු කරයි."
+content_search = "regex රටාව අනුව වැඩකරන අවකාශය තුළ ගොනු අන්තර්ගතය සෙවීම."
+cron_add = "කාලසටහන්ගත cron කාර්යයක් (shell හෝ agent) සාදන්න."
+cron_list = "සියලු කාලසටහන්ගත cron කාර්ය ලැයිස්තු කරන්න"
+cron_remove = "id අනුව cron කාර්යයක් ඉවත් කරන්න"
+cron_run = "cron කාර්යයක් වහාම ක්‍රියාත්මක කරන්න"
+cron_update = "පවතින cron කාර්යයක් යාවත්කාලීන කරන්න"
+delegate = "විශේෂිත කාරකයකට උප කාර්යයක් පවරන්න."
+file_edit = "නිවැරදි තන්තු ගැළපීම නව අන්තර්ගතයකින් ප්‍රතිස්ථාපනය කිරීමෙන් ගොනුවක් සංස්කරණය කරන්න"
+file_read = "පේළි අංක සහිතව ගොනු අන්තර්ගතය කියවන්න. PDF වෙතින් පෙළ උකහා ගනී."
+file_write = "වැඩකරන අවකාශය තුළ ගොනුවකට අන්තර්ගතය ලියන්න"
+git_operations = "Git මෙහෙයුම් ව්‍යුහගත ලෙස සිදු කරන්න (status, diff, log, branch, commit)"
+glob_search = "glob රටාවකට ගැළපෙන ගොනු සොයන්න"
+http_request = "බාහිර API වෙත HTTP ඉල්ලීම් කරන්න. ආරක්ෂක සීමා: අනුමත වසම් පමණි."
+memory_forget = "යතුරක් අනුව මතකයක් ඉවත් කරන්න."
+memory_recall = "දිගු කාලීන මතකයෙන් අදාළ කරුණු සොයන්න."
+memory_store = "දිගු කාලීන මතකයේ කරුණක් ගබඩා කරන්න."
+shell = "වැඩකරන අවකාශය තුළ shell විධානයක් ක්‍රියාත්මක කරන්න. ස්වාධීනතා ප්‍රතිපත්තියට යටත්."
+web_fetch = "URL එකක් ලබා ගෙන HTML සිට පෙළ බවට පරිවර්තනය කරන්න."
+web_search = "DuckDuckGo, Brave, හෝ Tavily හරහා වෙබ් සෙවීම."
+
+# Lanka-specific tools (ශ්‍රී ලංකා විශේෂිත මෙවලම්)
+cbsl_rates = "ශ්‍රී ලංකා මහ බැංකුවෙන් (CBSL) නවතම LKR විනිමය අනුපාත ලබා ගන්න"
+cse_snapshot = "කොළඹ කොටස් හුවමාරුවේ (CSE) ASPI සහ S&P20 දර්ශක ස්නැප්ෂොට් ලබා ගන්න"

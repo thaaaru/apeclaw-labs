@@ -1,10 +1,12 @@
 # Security Policy
 
+ApeClaw is a sovereign AI agent designed for enterprise and critical infrastructure deployments in Sri Lanka. We take security seriously.
+
 ## Supported Versions
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 0.1.x   | :white_check_mark: |
+| Version | Supported |
+| ------- | --------- |
+| 0.1.0-alpha | :white_check_mark: Active development |
 
 ## Reporting a Vulnerability
 
@@ -12,8 +14,8 @@
 
 Instead, please report them responsibly:
 
-1. **Email**: Send details to the maintainers via GitHub private vulnerability reporting
-2. **GitHub**: Use [GitHub Security Advisories](https://github.com/zeroclaw-labs/zeroclaw/security/advisories/new)
+1. **GitHub**: Use [GitHub Security Advisories](https://github.com/thaaaru/apeclaw-labs/security/advisories/new)
+2. **Email**: Contact the maintainer via GitHub private vulnerability reporting
 
 ### What to Include
 
@@ -30,7 +32,7 @@ Instead, please report them responsibly:
 
 ## Security Architecture
 
-ZeroClaw implements defense-in-depth security:
+ApeClaw implements defense-in-depth security:
 
 ### Autonomy Levels
 - **ReadOnly** — Agent can only read, no shell or write access
@@ -50,6 +52,15 @@ ZeroClaw implements defense-in-depth security:
 - Workspace escape via symlinks or absolute paths
 - Runaway cost from LLM API calls
 - Unauthorized shell command execution
+
+## Sovereign Security (Sri Lanka Deployment)
+
+ApeClaw adds enterprise compliance features specific to local deployments:
+
+- **`sl_audit_enabled = true`** — appends every tool execution and outbound request to `logs/apeclaw_audit.log` in JSONL format (ISO 27001 Annex A.12.4)
+- **No telemetry** — zero outbound analytics, crash reporting, or usage tracking
+- **Local secret store** — ChaCha20-Poly1305 AEAD encryption for API keys at rest
+- **Workspace isolation** — all data stays on your hardware; no cloud sync by default
 
 ## Security Testing
 
@@ -77,8 +88,8 @@ ZeroClaw Docker images follow CIS Docker Benchmark best practices:
 
 ```bash
 # Build and verify non-root user
-docker build -t zeroclaw .
-docker inspect --format='{{.Config.User}}' zeroclaw
+docker build -t apeclaw .
+docker inspect --format='{{.Config.User}}' apeclaw
 # Expected: 65534:65534
 
 # Run with read-only filesystem (production hardening)
